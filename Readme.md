@@ -1,4 +1,4 @@
-QCopter Remote Control Mini
+QCopter RC Mini
 ========
 * File Name   : Readme.md
 * Author      : Hom19910422
@@ -7,7 +7,7 @@ QCopter Remote Control Mini
 * Description : QCopterRemoteControl Information
 * Wiki        : https://github.com/Hom19910422/QCopterRemoteControl/wiki
 
-遙控板　RemoteControl mini
+遙控板　RemoteControl Mini
 ========
 * 控制器　STM32F407V 100Pin 168MHz DSP FPU
 * 螢幕　3.5吋螢幕480*320，使用R61581，FSMC操作
