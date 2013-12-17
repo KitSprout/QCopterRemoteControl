@@ -1,13 +1,14 @@
 [QCopterRC](https://github.com/Hom19910422/QCopterRemoteControl)
 ========
 * Author  : [Hom](https://github.com/Hom19910422)
-* Version : v0.0
+* Version : v1.0
 * Update  : 2013/12/17
 
 Description
 ========
 QCopteRC 是一個遙控器，用來與 QCopterFC 溝通、控制，是四軸飛行器的控制裝置，  
-板子上建有 3.5 吋螢幕，可以將四軸上的回傳回來的資訊顯示出來。
+搭載感測器，有體感功能，板子上外接 3.5 吋螢幕，可以將四軸上的回傳回來的資訊  
+顯示出來，並且建立操作介面。
 
 Hardware
 ========
@@ -17,9 +18,9 @@ Hardware
 * 儲存紀錄 : SD 卡，使用 SDIO 操作
 * 無線傳輸 : [nRF24L01P](http://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P) + PA + LNA
 * 乙太網路 : [W5500](http://www.wiznet.co.kr/Sub_Modules/en/product/Product_Detail.asp?cate1=&cate2=&cate3=&pid=1193)，使用 SPI 操作
-* 外接介面 : 1*SPI ( FFC16 ) 、1*USB ( micro ) 、1*UART
+* 外接介面 : 1*SPI ( FFC16 ) 、1*USB ( Micro ) 、1*UART、1*I2C/CAN
 * PCB 尺寸 : 155 * 60mm
-* 設計軟體 [Altium Designer 13](http://www.altium.com/en/products/altium-designer) ( [PcbLib](https://github.com/CYACAcademic/AltiumDesigner_PcbLibrary) use AD PcbLib v0.1 )
+* 設計軟體 [Altium Designer 13](http://www.altium.com/en/products/altium-designer) ( [PcbLib](https://github.com/CYACAcademic/AltiumDesigner_PcbLibrary) use AD PcbLib v0.2 )
 
 Program
 ========
