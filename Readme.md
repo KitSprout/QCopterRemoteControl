@@ -1,7 +1,7 @@
 [QCopterRC](https://github.com/Hom19910422/QCopterRemoteControl)
 ========
 * Author  : [Hom](https://github.com/Hom19910422)
-* Version : v1.0
+* Version : v1.1
 * Update  : 2013/12/21
 
 Description
@@ -21,6 +21,8 @@ Hardware
 * 外接介面 : 1*SPI ( FFC16 ) 、1*USB ( Micro ) 、1*UART、1*I2C/CAN
 * PCB 尺寸 : 155 * 60mm
 * 設計軟體 [Altium Designer 13](http://www.altium.com/en/products/altium-designer) ( [PcbLib](https://github.com/CYACAcademic/AltiumDesigner_PcbLibrary) use AD PcbLib v0.2 )
+
+<img src="https://lh6.googleusercontent.com/-vF0f_RPJLrE/UrWVzthW-5I/AAAAAAAAFwU/M2GJShai_Qs/s800/QCopterRC_System.png" height="633" width="800" />
 
 Program
 ========
