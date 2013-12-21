@@ -332,20 +332,17 @@ void LCD_SetWindow( u16 StartX, u16 StartY, u16 EndX, u16 EndY )
 **功能 : Set LCD BackLight
 **輸入 : BackLight
 **輸出 : None
-**使用 : LCD_SetBackLight(128);
+**使用 : LCD_SetBackLight(BLIGHT_DEFAULT);
 **=====================================================================================================*/
 /*=====================================================================================================*/
 //void LCD_SetBackLight( u16 BackLight )
 //{
-//	if(BackLight == 0) {
-//    LCD_LIG = 0;
-//	}
-//	else if (BackLight >= BLIGHT_MAX) {
+//	if(BackLight <= 0)
+//    LCD_LIG = BLIGHT_MIN;
+//	else if (BackLight >= BLIGHT_MAX)
 //    LCD_LIG = BLIGHT_MAX;
-//	}
-//  else {
+//  else
 //    LCD_LIG = BackLight;
-//  }
 //}
 /*=====================================================================================================*/
 /*=====================================================================================================*
@@ -361,89 +358,6 @@ void LCD_DrawPixel( u16 CoordiX, u16 CoordiY, u16 Color )
   LCD_SetCursor(CoordiX, CoordiY);
   LCD_WriteColor(Color);
 }
-/*=====================================================================================================*/
-/*=====================================================================================================*
-**函數 : LCD_DrawLine
-**功能 : Draw Line
-**輸入 : StartX, StartY, EndX, EndY, Color
-**輸出 : None
-**使用 : LCD_DrawLine(StartX, StartY, EndX, EndY, Color)
-**=====================================================================================================*/
-/*=====================================================================================================*/
-//void LCD_DrawLine( u16 StartX, u16 StartY, u16 EndX, u16 EndY, u32 Color )
-//{
-//	u16 i;
-//	s16 DeltaX, DeltaY;
-//	double Slope;
-
-//	DeltaX = EndX - StartX;
-//	DeltaY = EndY - StartY;
-
-//	// 計算 Slope
-//	if(DeltaX == 0)
-//		Slope = 0;
-//	else
-//		Slope = (double)DeltaY/(double)DeltaX;
-
-//	DeltaX = fabs(DeltaX);
-//	DeltaY = fabs(DeltaY);
-
-//	// 畫線
-//	if(EndX<StartX) {
-//		if(Slope<0) {
-//			if(DeltaX>DeltaY) {
-//				for(i=0; i<=DeltaX; i++)
-//					LCD_DrawPixel(EndX+i, EndY+(s16)(((double)i*Slope)-0.5), Color);
-//			}
-//			else {
-//				for(i=0; i<=DeltaY; i++)
-//					LCD_DrawPixel(EndX-(s16)(((double)i/Slope)-0.5), EndY-i, Color);
-//			}
-//		}
-//		else {
-//			if(DeltaX>DeltaY) {
-//				for(i=0; i<=DeltaX; i++)
-//					LCD_DrawPixel(EndX+i, EndY+(s16)(((double)i*Slope)+0.5), Color);
-//			}
-//			else {
-//				for(i=0; i<=DeltaY; i++)
-//					LCD_DrawPixel(EndX+(s16)(((double)i/Slope)+0.5), EndY+i, Color);
-//			}
-//		}
-//	}
-//	else if(EndX==StartX) {
-//		if(EndY>StartY) {
-//			for(i=0; i<=DeltaY; i++)
-//				LCD_DrawPixel(StartX, StartY+i, Color);
-//		}
-//		else {
-//			for(i=0; i<=DeltaY; i++)
-//				LCD_DrawPixel(EndX, EndY+i, Color);
-//		}
-//	}
-//	else {
-//		if(Slope<0) {
-//			if(DeltaX>DeltaY) {
-//				for(i=0; i<=DeltaX; i++)
-//					LCD_DrawPixel(StartX+i, StartY+(s16)(((double)i*Slope)-0.5), Color);
-//			}
-//			else {
-//				for(i=0; i<=DeltaY; i++)
-//					LCD_DrawPixel(StartX-(s16)(((double)i/Slope)-0.5), StartY-i, Color);
-//			}
-//		}
-//		else {
-//			if(DeltaX>DeltaY) {
-//				for(i=0; i<=DeltaX; i++)
-//					LCD_DrawPixel(StartX+i, StartY+(s16)(((double)i*Slope)+0.5), Color);
-//			}
-//			else {
-//				for(i=0; i<=DeltaY; i++)
-//					LCD_DrawPixel(StartX+(s16)(((double)i/Slope)+0.5), StartY+i, Color);
-//			}
-//		}
-//	}
-//}
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : LCD_DrawLineX
@@ -482,37 +396,37 @@ void LCD_DrawLineY( u16 CoordiX, u16 CoordiY, u16 Length, u16 Color )
 **功能 : Draw Rectangle
 **輸入 : CoordiX, CoordiY, Length, Width, Color
 **輸出 : None
-**使用 : LCD_DrawRectangle(CoordiX, CoordiY, Length, Width, Color)
+**使用 : LCD_DrawRectangle(CoordiX, CoordiY, Width, Height, Color)
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void LCD_DrawRectangle( u16 CoordiX, u16 CoordiY, u16 Length, u16 Width, u16 Color )
+void LCD_DrawRectangle( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, u16 Color )
 {
 	u16 i;
 
-	for(i=0; i<=Length; i++) {
+	for(i=0; i<=Height; i++) {
 		LCD_DrawPixel(CoordiX+i, CoordiY, Color);
 		LCD_DrawPixel(CoordiX+i, CoordiY+Width, Color);
 	}
 	for(i=1; i<Width; i++) {
 		LCD_DrawPixel(CoordiX, CoordiY+i, Color);
-		LCD_DrawPixel(CoordiX+Length, CoordiY+i, Color);
+		LCD_DrawPixel(CoordiX+Height, CoordiY+i, Color);
 	}
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*
-**函數 : LCD_DrawRectangleFull
+**函數 : LCD_DrawRectangleFill
 **功能 : Draw Rectangle
 **輸入 : CoordiX, CoordiY, Length, Width, Color
 **輸出 : None
-**使用 : LCD_DrawRectangleFull(CoordiX, CoordiY, Length, Width, Color)
+**使用 : LCD_DrawRectangleFill(CoordiX, CoordiY, Width, Height, Color)
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void LCD_DrawRectangleFull( u16 CoordiX, u16 CoordiY, u16 Length, u16 Width, u16 Color )
+void LCD_DrawRectangleFill( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, u16 Color )
 {
 	u16 i, j;
 
 	for(i=0; i<Width; i++)
-		for(j=0; j<Length; j++)
+		for(j=0; j<Height; j++)
 			LCD_DrawPixel(CoordiX+j, CoordiY+i, Color);
 }
 /*=====================================================================================================*/
@@ -560,11 +474,18 @@ void LCD_DrawCircle( u16 CoordiX, u16 CoordiY, u16 Radius, u16 Color )
 **功能 : Draw Picture
 **輸入 : CoordiX, CoordiY, Length, Width, Pic
 **輸出 : None
-**使用 : LCD_DrawPicture(CoordiX, CoordiY, Length, Width, Pic)
+**使用 : LCD_DrawPicture(CoordiX, CoordiY, Width, Height, Pic);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void LCD_DrawPicture( u16 CoordiX, u16 CoordiY, u16 Length, u16 Width, uc8 *Pic )
+void LCD_DrawPicture( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, uc8 *Pic )
 {
+  u16* readPixel = (u16*)Pic;
+  u32 i = 0, j = Height*Width;
+
+  LCD_SetWindow(CoordiX, CoordiY, CoordiX+Width-1, CoordiY+Height-1);
+
+  for(i=0; i<j; i++)
+    LCD_WriteColor(readPixel[i]);
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*
@@ -644,7 +565,7 @@ void LCD_PutChar1608_( u16 CoordiX, u16 CoordiY, u8* ChWord, u16 FontColor, u16 
 **功能 : Put String
 **輸入 : CoordiX, CoordiY, ChWord, FontStyle, FontColor, BackColor
 **輸出 : None
-**使用 : LCD_PutStr(x, y, "PUT CHAR", WHITE, BLACK)
+**使用 : LCD_PutStr(10, 10, (u8*)"TFT LCD TEST ... ", ASCII1608, WHITE, BLACK);
 **=====================================================================================================*/
 /*=====================================================================================================*/
 void LCD_PutStr( u16 CoordiX, u16 CoordiY, u8 *ChWord, u8 FontStyle, u16 FontColor, u16 BackColor )
@@ -703,22 +624,33 @@ void LCD_PutNum( u16 CoordiX, u16 CoordiY, u8 Type, u8 Length, u32 NumData, u16 
 void LCD_TestColoBar( void )
 {
   u32 i = 0, j = 0;
-  u16 drawColor[9] = {
+  u16 drawColor[20] = {
+    WHITE,
     RED,
     GREEN,
     BLUE,
     MAGENTA,
+    GRED,
+    GBLUE,
+    BRED,
+    BROWN,
+    BRRED,
     CYAN,
-    BLACK,
     GRAY,
-    WHITE,
-    YELLOW
+    YELLOW,
+    DARKBLUE,
+    LIGHTBLUE,
+    GRAYBLUE,
+    LIGHTGREEN,
+    LGRAY,
+    LGRAYBLUE,
+    LBBLUE
   };
 
 	LCD_SetWindow(0, 0, LCD_W-1, LCD_H-1);
 
-  for(i=0; i<9; i++) {
-    j = (i!=8)? 35*LCD_W : (LCD_H-35*8)*LCD_W;
+  for(i=0; i<20; i++) {
+    j = 16*LCD_W;
     while(j--)
       LCD_WriteColor(drawColor[i]);
   }

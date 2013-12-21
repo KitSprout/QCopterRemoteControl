@@ -478,20 +478,20 @@ void LCD_DrawLineY( u16 CoordiX, u16 CoordiY, u16 Length, u16 Color )
 **功能 : Draw Rectangle
 **輸入 : CoordiX, CoordiY, Length, Width, Color
 **輸出 : None
-**使用 : LCD_DrawRectangle(CoordiX, CoordiY, Length, Width, Color)
+**使用 : LCD_DrawRectangle(CoordiX, CoordiY, Width, Height, Color)
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void LCD_DrawRectangle( u16 CoordiX, u16 CoordiY, u16 Length, u16 Width, u16 Color )
+void LCD_DrawRectangle( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, u16 Color )
 {
 	u16 i;
 
-	for(i=0; i<=Length; i++) {
+	for(i=0; i<=Height; i++) {
 		LCD_DrawPixel(CoordiX+i, CoordiY, Color);
 		LCD_DrawPixel(CoordiX+i, CoordiY+Width, Color);
 	}
 	for(i=1; i<Width; i++) {
 		LCD_DrawPixel(CoordiX, CoordiY+i, Color);
-		LCD_DrawPixel(CoordiX+Length, CoordiY+i, Color);
+		LCD_DrawPixel(CoordiX+Height, CoordiY+i, Color);
 	}
 }
 /*=====================================================================================================*/
@@ -500,15 +500,15 @@ void LCD_DrawRectangle( u16 CoordiX, u16 CoordiY, u16 Length, u16 Width, u16 Col
 **功能 : Draw Rectangle
 **輸入 : CoordiX, CoordiY, Length, Width, Color
 **輸出 : None
-**使用 : LCD_DrawRectangleFill(CoordiX, CoordiY, Length, Width, Color)
+**使用 : LCD_DrawRectangleFill(CoordiX, CoordiY, Width, Height, Color)
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void LCD_DrawRectangleFill( u16 CoordiX, u16 CoordiY, u16 Length, u16 Width, u16 Color )
+void LCD_DrawRectangleFill( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, u16 Color )
 {
 	u16 i, j;
 
 	for(i=0; i<Width; i++)
-		for(j=0; j<Length; j++)
+		for(j=0; j<Height; j++)
 			LCD_DrawPixel(CoordiX+j, CoordiY+i, Color);
 }
 /*=====================================================================================================*/
@@ -556,11 +556,18 @@ void LCD_DrawCircle( u16 CoordiX, u16 CoordiY, u16 Radius, u16 Color )
 **功能 : Draw Picture
 **輸入 : CoordiX, CoordiY, Length, Width, Pic
 **輸出 : None
-**使用 : LCD_DrawPicture(CoordiX, CoordiY, Length, Width, Pic)
+**使用 : LCD_DrawPicture(CoordiX, CoordiY, Width, Height, Pic);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void LCD_DrawPicture( u16 CoordiX, u16 CoordiY, u16 Length, u16 Width, uc8 *Pic )
+void LCD_DrawPicture( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, uc8 *Pic )
 {
+  u16* readPixel = (u16*)Pic;
+  u32 i = 0, j = Height*Width;
+
+  LCD_SetWindow(CoordiX, CoordiY, CoordiX+Width-1, CoordiY+Height-1);
+
+  for(i=0; i<j; i++)
+    LCD_WriteColor(readPixel[i]);
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*
