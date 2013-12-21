@@ -59,6 +59,7 @@ int main( void )
   LED_B = 1;
   LED_Y = 1;
 
+  LED_R = 0;
   LCD_Clear(BLACK);
 
   // SD Card Init Info
@@ -116,12 +117,13 @@ int main( void )
   RS232_SendStr(USART2, (u8*)"----------------------\r\n");
   RS232_SendStr(USART2, (u8*)"\r\n");
 
-  Delay_100ms(5);
+  Delay_100ms(1);
   //////////////////// Wait
   while(KEY_S2 != 1){
     LED_G = ~LED_G;
     Delay_100ms(5);
   }
+  LED_G = 0;
   LCD_Clear(BLACK);
 
   // Read Directory File
@@ -168,12 +170,13 @@ int main( void )
     RS232_SendStr(USART2, (u8*)"\r\n");
   }
 
-  Delay_100ms(5);
+  Delay_100ms(1);
   //////////////////// Wait
   while(KEY_S2 != 1){
     LED_B = ~LED_B;
     Delay_100ms(5);
   }
+  LED_B = 0;
   LCD_Clear(BLACK);
 
   // Write File

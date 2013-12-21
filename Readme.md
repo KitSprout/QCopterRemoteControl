@@ -32,6 +32,7 @@ Test
 * QCopterFC UART
 * QCopterFC SDIO ( Use [Fatfs](http://elm-chan.org/fsw/ff/00index_e.html) 0.10 )
 * QCopterFC FSMC ( Use [TFT_3.5-inch](https://github.com/Hom19910422/TFT_3.5-inch) )
+* QCopterFC FFCSPI-TFT2.2 ( use [TFT_2.2-inch](https://github.com/Hom19910422/TFT_2.2-inch) )
 
 Related Documents
 ========
