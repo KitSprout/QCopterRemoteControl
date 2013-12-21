@@ -2,7 +2,7 @@
 ========
 * Author  : [Hom](https://github.com/Hom19910422)
 * Version : v1.0
-* Update  : 2013/12/17
+* Update  : 2013/12/21
 
 Description
 ========
@@ -25,8 +25,13 @@ Hardware
 Program
 ========
 
+
 Test
 ========
+* QCopterFC LED
+* QCopterFC UART
+* QCopterFC SDIO ( Use [Fatfs](http://elm-chan.org/fsw/ff/00index_e.html) 0.10 )
+* QCopterFC FSMC ( Use [TFT_3.5-inch](https://github.com/Hom19910422/TFT_3.5-inch) )
 
 Related Documents
 ========
