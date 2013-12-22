@@ -22,7 +22,7 @@ Hardware
 * PCB 尺寸 : 155 * 60mm
 * 設計軟體 [Altium Designer 13](http://www.altium.com/en/products/altium-designer) ( [PcbLib](https://github.com/CYACAcademic/AltiumDesigner_PcbLibrary) use AD PcbLib v0.2 )
 
-*** 目前 W5500 電路部分似乎有問題，正在檢查 ...
+*** 目前 W5500 電路部分似乎有問題，正在檢查 ... nRF24L01 測試中 ... 
 
 <img src="https://lh3.googleusercontent.com/-r6Nh2HrxldA/UrWXRap8O-I/AAAAAAAAFwo/pbTsi6B34RU/s800/QCopterRC_System.png" height="664" width="800" />
 
@@ -45,16 +45,21 @@ Test
 
 View
 ========
-<img src="https://lh5.googleusercontent.com/-54YnRyrZJSg/Uq8ca2uChwI/AAAAAAAAFWk/lqvL_L71pnQ/s800/RC_Top3D1_v1.0.png" height="317" width="800" />
-<img src="https://lh5.googleusercontent.com/-p9rxwdCPN0E/Uq8cYh2LKjI/AAAAAAAAFV4/D2___PPIYdw/s800/RC_Bottom3D1_v1.0.png" height="334" width="800" />
+<img src="https://lh6.googleusercontent.com/-AQUZyXwInaM/UrcvK1A35xI/AAAAAAAAF6k/2eTzKeHJpbI/s800/DSC_1833.jpg" height="450" width="800" />
+<img src="https://lh4.googleusercontent.com/-A6pGim8IKBA/UrcvLityKFI/AAAAAAAAF7Q/EN3v33-LZH8/s800/DSC_1838.jpg" height="450" width="800" />
+<img src="https://lh6.googleusercontent.com/-1GhxOp8Odig/UrcvJOf2yGI/AAAAAAAAF6A/DydFt1GlMtc/s800/DSC_1804.jpg" height="450" width="800" />
+<img src="https://lh4.googleusercontent.com/-deRcVLpT0XQ/UrcvKjl6h_I/AAAAAAAAF6Y/J-30F-g-q60/s800/DSC_1828.jpg" height="450" width="800" />
+<img src="https://lh4.googleusercontent.com/-3XqjPx65wiw/UrcvKvSGUSI/AAAAAAAAF6c/gBzTH2sirxQ/s800/DSC_1820.jpg" height="450" width="800" />
+<img src="https://lh4.googleusercontent.com/-4TkxysD7Ot4/UrcvJ_Tlu9I/AAAAAAAAF6M/iOD2lAik7kE/s800/DSC_1813.jpg" height="450" width="800" />
+<img src="https://lh4.googleusercontent.com/-nApnkzk6IK0/UrcvMN4k6nI/AAAAAAAAF64/sYbOPJUFbyA/s800/DSC_1864.jpg" height="450" width="800" />
 <br />
 更多圖片 [Google+ albums](https://plus.google.com/u/0/photos/+文宏王Hom/albums/5930573467560028593)
 
 Config
 ========
-<img src="https://lh4.googleusercontent.com/-cw0Fm1Ns6YE/Uq8swvYOgXI/AAAAAAAAFY4/0MDGJfJ2_2Y/s800/QCopterRC_Config_PIN.png" height="332" width="800" />
-<img src="https://lh4.googleusercontent.com/-ZR7rreKls4g/Uq8swjjCkuI/AAAAAAAAFZE/02-HMPcusxQ/s1600/QCopterRC_Config_AF.png" width="800" />
-<img src="https://lh6.googleusercontent.com/-K6xmewD5tEU/Uq8swhN4jiI/AAAAAAAAFY0/_UgIbHUlUf4/s800/QCopterRC_Config_DMA.png" height="492" width="800" />
+<img src="https://lh5.googleusercontent.com/-vNn1p6Z6Y7s/UrczaR9EPkI/AAAAAAAAF9M/80ux41UU7Ac/s1600/QCopterRC_Config_PIN.png" width="800" />
+<img src="https://lh4.googleusercontent.com/-dkd0YtkochY/UrczaIU0xXI/AAAAAAAAF9E/m6ET7IX6QPM/s1600/QCopterRC_Config_AF.png" width="800" />
+<img src="https://lh6.googleusercontent.com/-8CqkUnWzeiY/UrczaFQCg1I/AAAAAAAAF9A/zu0XXFit_L0/s1600/QCopterRC_Config_DMA.png" width="800" />
 
 Schematic
 ========
