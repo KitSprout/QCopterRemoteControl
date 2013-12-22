@@ -2,7 +2,7 @@
 ========
 * Author  : [Hom](https://github.com/Hom19910422)
 * Version : v1.1
-* Update  : 2013/12/22
+* Update  : 2013/12/23
 
 Description
 ========
@@ -32,7 +32,7 @@ Related Documents
 
 Program
 ========
-
+QCopterRC WaveForm 簡易示波器程式
 
 Test
 ========
