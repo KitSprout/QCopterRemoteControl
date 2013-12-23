@@ -7,8 +7,8 @@
 Description
 ========
 QCopteRC 是一個遙控器，用來與 QCopterFC 溝通、控制，是四軸飛行器的控制裝置，  
-搭載感測器，有體感功能，板子上外接 3.5 吋螢幕，可以將四軸上的回傳回來的資訊  
-顯示出來，並且建立操作介面。
+搭載感測器，有體感功能，板子上外接 3.5 吋螢幕，可以將四軸上的回傳回來的資訊顯  
+示出來，並且建立操作介面。
 
 Hardware
 ========
@@ -22,7 +22,7 @@ Hardware
 * PCB 尺寸 : 155 * 60mm
 * 設計軟體 [Altium Designer 13](http://www.altium.com/en/products/altium-designer) ( [PcbLib](https://github.com/CYACAcademic/AltiumDesigner_PcbLibrary) use AD PcbLib v0.2 )
 
-*** 目前 W5500 電路部分似乎有問題，正在檢查 ... nRF24L01 測試中 ... 
+*** 目前 W5500 電路部分似乎有問題，正在檢查 ...
 
 <img src="https://lh3.googleusercontent.com/-r6Nh2HrxldA/UrWXRap8O-I/AAAAAAAAFwo/pbTsi6B34RU/s800/QCopterRC_System.png" height="664" width="800" />
 
@@ -32,16 +32,17 @@ Related Documents
 
 Program
 ========
-QCopterRC WaveForm 簡易示波器程式
+QCopterRC WaveForm ( MDK 5.0, StdPeriph_Lib v1.3 )
 
 Test
 ========
 * QCopterRC ADC
-* QCopterRC LED
-* QCopterRC UART
-* QCopterRC SDIO ( Use [Fatfs](http://elm-chan.org/fsw/ff/00index_e.html) 0.10 )
-* QCopterRC FSMC ( Use [TFT_3.5-inch](https://github.com/Hom19910422/TFT_3.5-inch) )
 * QCopterRC FFCSPI-TFT2.2 ( use [TFT_2.2-inch](https://github.com/Hom19910422/TFT_2.2-inch) )
+* QCopterRC FSMC ( Use [TFT_3.5-inch](https://github.com/Hom19910422/TFT_3.5-inch) )
+* QCopterRC LED
+* QCopterRC NRF
+* QCopterRC SDIO ( Use [Fatfs](http://elm-chan.org/fsw/ff/00index_e.html) 0.10 )
+* QCopterRC UART
 
 View
 ========
@@ -58,7 +59,7 @@ View
 Config
 ========
 <img src="https://lh5.googleusercontent.com/-vNn1p6Z6Y7s/UrczaR9EPkI/AAAAAAAAF9M/80ux41UU7Ac/s1600/QCopterRC_Config_PIN.png" width="800" />
-<img src="https://lh4.googleusercontent.com/-dkd0YtkochY/UrczaIU0xXI/AAAAAAAAF9E/m6ET7IX6QPM/s1600/QCopterRC_Config_AF.png" width="800" />
+<img src="https://lh4.googleusercontent.com/-dkd0YtkochY/UrczaIU0xXI/AAAAAAAAF9E/m6ET7IX6QPM/s1600/QCopterRC_Config_AF.png"  width="800" />
 <img src="https://lh6.googleusercontent.com/-8CqkUnWzeiY/UrczaFQCg1I/AAAAAAAAF9A/zu0XXFit_L0/s1600/QCopterRC_Config_DMA.png" width="800" />
 
 Schematic
