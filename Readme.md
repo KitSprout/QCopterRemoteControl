@@ -2,7 +2,7 @@
 ========
 * Author  : [Hom](https://github.com/Hom19910422)
 * Version : v1.1
-* Update  : 2013/12/23
+* Update  : 2013/12/24
 
 Description
 ========
@@ -64,7 +64,31 @@ Config
 
 Schematic
 ========
-
+<img src="https://lh4.googleusercontent.com/-XJrP5jj4uVc/Urhxxdme28I/AAAAAAAAF_Y/r3ew48ok084/s1600/QCopterRC_Sch_MAIN.png" height="422" width="800" />
+<br>＊STM32F407V<br>
+<img src="https://lh3.googleusercontent.com/-SxaNTLV6tpo/Urhxxwy7hRI/AAAAAAAAF_c/SHcH6ecnMIs/s800/QCopterRC_Sch_MCU.png" height="752" width="591" />
+<br>＊SW<br>
+<img src="https://lh6.googleusercontent.com/-Ab_ii-lINjc/UrhxzJTdqrI/AAAAAAAAF_g/XK3r09ch1YY/s800/QCopterRC_Sch_SWD.png" height="125" width="142" />
+<br>＊POWER<br>
+<img src="https://lh4.googleusercontent.com/-t6zbRQSs670/Urhxy66k_qI/AAAAAAAAF_w/aY_S796HfGE/s800/QCopterRC_Sch_POWER.png" height="289" width="330" />
+<br>＊LED<br>
+<img src="https://lh6.googleusercontent.com/-dNle7SRrhxk/Urhxw0rm02I/AAAAAAAAF-8/eYzahldl1vo/s800/QCopterRC_Sch_LED.png" height="143" width="233" />
+<br>＊KEY<br>
+<img src="https://lh6.googleusercontent.com/-hX6X6MF3RnY/UrhxwSmUAQI/AAAAAAAAF_A/yOrXEpzLoks/s800/QCopterRC_Sch_KEY.png" height="563" width="800" />
+<br>＊NRF<br>
+<img src="https://lh5.googleusercontent.com/-CSlGL5D3Npk/UrhxyDFwxFI/AAAAAAAAF_Q/OsRn1dDF1PM/s800/QCopterRC_Sch_NRF.png" height="163" width="172" />
+<br>＊IMU<br>
+<img src="https://lh3.googleusercontent.com/-OD69VuptCW8/UrhxwP06e2I/AAAAAAAAF-s/A5RKLNDV_n4/s800/QCopterRC_Sch_IMU.png" height="138" width="166" />
+<br>＊EXT<br>
+<img src="https://lh6.googleusercontent.com/-AyW2FcYtiOI/Urhxvldj77I/AAAAAAAAF-Y/P7spzFB-VeU/s800/QCopterRC_Sch_EXT.png" height="105" width="251" />
+<br>＊FFCSPI<br>
+<img src="https://lh5.googleusercontent.com/-a2MLB5qE-zc/UrhxvjxS9YI/AAAAAAAAF-g/ItJLxbqZsa8/s800/QCopterRC_Sch_FFCSPI.png" height="263" width="152" />
+<br>＊LCD<br>
+<img src="https://lh5.googleusercontent.com/-TQ0qQbi0F4k/UrhxwuK6l-I/AAAAAAAAF-4/lC83gfkhJGM/s800/QCopterRC_Sch_LCD.png" height="178" width="771" />
+<br>＊USB<br>
+<img src="https://lh4.googleusercontent.com/-GG_1xZfw4Cs/UrhxzV2CI9I/AAAAAAAAF_s/YF6jB9EE4F0/s800/QCopterRC_Sch_USB.png" height="186" width="239" />
+<br>＊ETH<br>
+<img src="https://lh5.googleusercontent.com/-s6iejk9BC9g/Urhxvm461nI/AAAAAAAAF-k/jwPnLcUFrGs/s1600/QCopterRC_Sch_ETH.png" height="476" width="800" />
 <br />
 <br />
 <a href="http://www.oshwa.org/">
