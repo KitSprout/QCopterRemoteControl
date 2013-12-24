@@ -2,7 +2,7 @@
 ========
 * Author  : [Hom](https://github.com/Hom19910422)
 * Version : v1.1
-* Update  : 2013/12/24
+* Update  : 2013/12/25
 
 Description
 ========
@@ -32,6 +32,7 @@ Related Documents
 
 Program
 ========
+QCopterRC RemoteControl ( 完善中... MDK 5.0, StdPeriph_Lib v1.3 )
 QCopterRC WaveForm ( MDK 5.0, StdPeriph_Lib v1.3 )
 
 Test
