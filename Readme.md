@@ -2,7 +2,7 @@
 ========
 * Author  : [Hom](https://github.com/Hom19910422)
 * Version : v1.1
-* Update  : 2013/12/25
+* Update  : 2013/12/26
 
 Description
 ========
@@ -32,7 +32,7 @@ Related Documents
 
 Program
 ========
-QCopterRC RemoteControl ( 完善中... MDK 5.0, StdPeriph_Lib v1.3 )
+QCopterRC RemoteControl ( 完善中... MDK 5.0, StdPeriph_Lib v1.3 )  
 QCopterRC WaveForm ( MDK 5.0, StdPeriph_Lib v1.3 )
 
 Test
@@ -62,6 +62,9 @@ Config
 <img src="https://lh5.googleusercontent.com/-vNn1p6Z6Y7s/UrczaR9EPkI/AAAAAAAAF9M/80ux41UU7Ac/s1600/QCopterRC_Config_PIN.png" width="800" />
 <img src="https://lh4.googleusercontent.com/-dkd0YtkochY/UrczaIU0xXI/AAAAAAAAF9E/m6ET7IX6QPM/s1600/QCopterRC_Config_AF.png"  width="800" />
 <img src="https://lh6.googleusercontent.com/-8CqkUnWzeiY/UrczaFQCg1I/AAAAAAAAF9A/zu0XXFit_L0/s1600/QCopterRC_Config_DMA.png" width="800" />
+
+*** 傳輸資料格式 QFC_TO_QRC
+<img src="https://lh3.googleusercontent.com/-eIh5NvuE0aw/UrsPnzmAcZI/AAAAAAAAGDc/mu5YwwC-S1s/s800/QFC_TO_QRC.png" height="678" width="800" />
 
 Schematic
 ========
