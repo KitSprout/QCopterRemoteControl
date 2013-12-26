@@ -39,21 +39,49 @@ typedef __IO enum {
   WINDOWS_CONF,
   WINDOWS_OUT_R
 } WINDOWS_MENU;
+typedef __IO enum {
+  WAVEFORM_OUT_L = 0,
+  WAVEFORM_ACC,
+  WAVEFORM_GYR,
+  WAVEFORM_MAG,
+  WAVEFORM_ANG,
+  WAVEFORM_THR,
+  WAVEFORM_TEST,
+  WAVEFORM_OUT_R
+} WAVEFORM_SEL;
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-void Windows_Clear( u32 Color );
-void Windows_DrawPixel( u16 CoordiX, u16 CoordiY, u16 Color );
-void Windows_DrawLineX( u16 CoordiX, u16 CoordiY, u16 Length, u16 Color );
-void Windows_DrawLineY( u16 CoordiX, u16 CoordiY, u16 Length, u16 Color );
-void Windows_DrawRectangle( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, u16 Color );
-void Windows_DrawRectangleFill( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, u16 Color );
-void Windows_DrawCircle( u16 CoordiX, u16 CoordiY, u16 Radius, u16 Color );
-void Windows_DrawPicture( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, uc8 *Pic );
-void Windows_PutStr( u16 CoordiX, u16 CoordiY, u8 *ChWord, u8 FontStyle, u16 FontColor, u16 BackColor );
-void Windows_PutNum( u16 CoordiX, u16 CoordiY, u8 Type, u8 Length, u32 NumData, u16 FontColor, u16 BackColor );
+void UserInterface_Init( void );
+void UserInterface_Update( WINDOWS_MENU MenuSel );
+void UserInterface_MoveSel( WINDOWS_MENU MenuSel );
 
-void Windows_DrawMenu( void );
-void Windows_SelMenu( u16 CoordiX, u32 SColor, u32 BColor );
+static void MenuCtrl_Motor_Init( void );
+//static void MenuCtrl_Motor( void );
+static void MenuCtrl_Connection_Init( void );
+static void MenuCtrl_Connection( void );
+static void MenuCtrl_Mode_Init( void );
+static void MenuCtrl_Mode( void );
+static void MenuCtrl_WorkTime_Init( void );
+static void MenuCtrl_WorkTime( void );
+static void MenuCtrl_Power_Init( void );
+static void MenuCtrl_Power( void );
+
+static void MenuWave_WaveFrom_Init( void );
+static void MenuWave_WaveFrom( WAVEFORM_SEL WaveForm_Sel );
+
+static void Windows_DrawMenu( void );
+static void Windows_SelMenu( u16 CoordiX, u32 SColor, u32 BColor );
+
+static void Windows_Clear( u32 Color );
+static void Windows_DrawPixel( u16 CoordiX, u16 CoordiY, u16 Color );
+static void Windows_DrawLineX( u16 CoordiX, u16 CoordiY, u16 Length, u16 Color );
+static void Windows_DrawLineY( u16 CoordiX, u16 CoordiY, u16 Length, u16 Color );
+static void Windows_DrawRectangle( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, u16 Color );
+static void Windows_DrawRectangleFill( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, u16 Color );
+static void Windows_DrawCircle( u16 CoordiX, u16 CoordiY, u16 Radius, u16 Color );
+static void Windows_DrawPicture( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, uc8 *Pic );
+static void Windows_PutStr( u16 CoordiX, u16 CoordiY, u8 *ChWord, u8 FontStyle, u16 FontColor, u16 BackColor );
+static void Windows_PutNum( u16 CoordiX, u16 CoordiY, u8 Type, u8 Length, u32 NumData, u16 FontColor, u16 BackColor );
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 #endif

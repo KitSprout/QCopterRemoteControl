@@ -6,12 +6,12 @@
 #include "stm32f4xx.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-#define WaveChannelMax  3
-#define WaveWindowX     10
-#define WaveWindowY     10
+#define WaveChannelMax  4
+#define WaveWindowX     8
+#define WaveWindowY     8
 #define WaveFormW       400
-#define WaveFormH       150
-#define WaveForm2H      300
+#define WaveFormH       140
+#define WaveForm2H      280
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 typedef struct {

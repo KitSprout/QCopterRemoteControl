@@ -15,8 +15,8 @@
 #define LED_Y   PEO(6)
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-u8 TxBuf[SendTimes][TxBufSize] = {0};
-u8 RxBuf[ReadTimes][RxBufSize] = {0};
+u8 TxBuf[TxBufSize] = {0};
+u8 RxBuf[RxBufSize] = {0};
 
 u8 TX_ADDRESS[TX_ADR_WIDTH] = { 0x34,0x43,0x10,0x10,0x01 };   // 定義一個靜態發送地址
 u8 RX_ADDRESS[RX_ADR_WIDTH] = { 0x34,0x43,0x10,0x10,0x01 };
@@ -118,17 +118,13 @@ void nRF24L01_Config( void )
 void nRF_Recv_IRQ( void )
 {
 	u8 Sta = 0;
-	static u8 nRF_Read = 0;
 
 	NRF_CE = 0;
 	Sta = nRF_ReadReg(STATUS);
 	if(Sta&RX_DR) {
 		nRF_WriteReg(NRF_WRITE+STATUS, Sta);
-		nRF_ReadBuf(RD_RX_PLOAD, RxBuf[nRF_Read], RX_PLOAD_WIDTH);
+		nRF_ReadBuf(RD_RX_PLOAD, RxBuf, RX_PLOAD_WIDTH);
 		nRF_WriteReg(FLUSH_RX, NOP);
-// 		nRF_Read++;
-// 		if(nRF_Read == ReadTimes)
-// 			nRF_Read = 0;
 	}
 }
 /*=====================================================================================================*/

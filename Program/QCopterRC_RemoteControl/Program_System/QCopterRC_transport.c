@@ -1,62 +1,77 @@
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 #include "stm32f4_system.h"
-#include "QCopterFC.h"
-#include "QCopterFC_transport.h"
-#include "module_ms5611.h"
-#include "module_sensor.h"
+#include "QCopterRC_transport.h"
 #include "module_nrf24l01.h"
-#include "algorithm_quaternion.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-extern vs16 Tmp_PID_KP;
-extern vs16 Tmp_PID_KI;
-extern vs16 Tmp_PID_KD;
-extern vs16 Tmp_PID_Pitch;
-
-vu16 RecvData[KeyNums] = {0};
-u8 TxBuf[SendTimes][TxBufSize] = {0};
-u8 RxBuf[ReadTimes][RxBufSize] = {0};
+TR_RECV_DATA RF_RecvData;
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : Transport_Recv
 **功能 : 紀錄接收資料
 **輸入 : Recv_Buf
 **輸出 : None
-**使用 : Transport_Recv(RxBuf[0]);
+**使用 : Transport_Recv(RxBuf);
 **=====================================================================================================*/
 /*=====================================================================================================*/
 void Transport_Recv( u8* RecvBuf )
 {
-  KEYR_J    = (u16)RecvBuf[0];
-  KEYR_U    = (u16)RecvBuf[1];
-  KEYR_D    = (u16)RecvBuf[2];
-  KEYR_L    = (u16)RecvBuf[3];
-  KEYR_R    = (u16)RecvBuf[4];
-  KEYR_S1   = (u16)RecvBuf[5];
-  KEYR_S2   = (u16)RecvBuf[6];
-  KEYL_J    = (u16)RecvBuf[7];
-  KEYL_U    = (u16)RecvBuf[8];
-  KEYL_D    = (u16)RecvBuf[9];
-  KEYL_L    = (u16)RecvBuf[10];
-  KEYL_R    = (u16)RecvBuf[11];
-  KEYL_S1   = (u16)RecvBuf[12];
-  KEYL_S2   = (u16)RecvBuf[13];
-  Exp_Pitch = (u16)((RecvBuf[15] << 8) | RecvBuf[14]);
-  Exp_Roll  = (u16)((RecvBuf[17] << 8) | RecvBuf[16]);
-//   JSR_X     = (u16)((RecvBuf[15] << 8) | RecvBuf[14]);
-//   JSR_Y     = (u16)((RecvBuf[17] << 8) | RecvBuf[16]);
-  JSR_Z     = (u16)((RecvBuf[19] << 8) | RecvBuf[18]);
-  Exp_Yaw   = (u16)((RecvBuf[21] << 8) | RecvBuf[20]);
-  Exp_Thr   = (u16)((RecvBuf[23] << 8) | RecvBuf[22]);
-//   JSL_X     = (u16)((RecvBuf[21] << 8) | RecvBuf[20]);
-//   JSL_Y     = (u16)((RecvBuf[23] << 8) | RecvBuf[22]);
-  JSL_Z     = (u16)((RecvBuf[25] << 8) | RecvBuf[24]);
-//   Exp_Pitch = (u16)((RecvBuf[27] << 8) | RecvBuf[26]);
-//   Exp_Roll  = (u16)((RecvBuf[29] << 8) | RecvBuf[28]);
-//   Exp_Thr   = (u16)((RecvBuf[31] << 8) | RecvBuf[30]);
-  RecvTime_Sec = (u8)(RecvBuf[30]);
-  RecvTime_Min = (u8)(RecvBuf[31]);
+  RF_RecvData.Packet    = (u8)RecvBuf[0];
+  RF_RecvData.Time.Min  = (u8)RecvBuf[1];
+  RF_RecvData.Time.Sec  = (u8)RecvBuf[2];
+  RF_RecvData.Time.mSec = (u8)RecvBuf[3];
+
+  switch(RF_RecvData.Packet) {
+
+    case 0x01:
+      RF_RecvData.PID.KP      = (u16)Byte16(RecvBuf[4],  RecvBuf[5]);
+      RF_RecvData.PID.KI      = (u16)Byte16(RecvBuf[6],  RecvBuf[7]);
+      RF_RecvData.PID.KD      = (u16)Byte16(RecvBuf[8],  RecvBuf[9]);
+      RF_RecvData.Thr.CH1     = (u16)Byte16(RecvBuf[10], RecvBuf[11]);
+      RF_RecvData.Thr.CH2     = (u16)Byte16(RecvBuf[12], RecvBuf[13]);
+      RF_RecvData.Thr.CH3     = (u16)Byte16(RecvBuf[14], RecvBuf[15]);
+      RF_RecvData.Thr.CH4     = (u16)Byte16(RecvBuf[16], RecvBuf[17]);
+      RF_RecvData.Thr.CH5     = (u16)Byte16(RecvBuf[18], RecvBuf[19]);
+      RF_RecvData.Thr.CH6     = (u16)Byte16(RecvBuf[20], RecvBuf[21]);
+      RF_RecvData.Batery.Vol  = (u8)RecvBuf[22];
+      RF_RecvData.Batery.Cur  = (u8)RecvBuf[23];
+      RF_RecvData.Batery.Cap  = (u16)Byte16(RecvBuf[24], RecvBuf[25]);
+      break;
+
+    case 0x02:
+      RF_RecvData.Acc.X       = (s16)Byte16(RecvBuf[4],  RecvBuf[5]);
+      RF_RecvData.Acc.Y       = (s16)Byte16(RecvBuf[6],  RecvBuf[7]);
+      RF_RecvData.Acc.Z       = (s16)Byte16(RecvBuf[8],  RecvBuf[9]);
+      RF_RecvData.Gyr.X       = (s16)Byte16(RecvBuf[10], RecvBuf[11]);
+      RF_RecvData.Gyr.Y       = (s16)Byte16(RecvBuf[12], RecvBuf[13]);
+      RF_RecvData.Gyr.Z       = (s16)Byte16(RecvBuf[14], RecvBuf[15]);
+      RF_RecvData.Mag.X       = (s16)Byte16(RecvBuf[16], RecvBuf[17]);
+      RF_RecvData.Mag.Y       = (s16)Byte16(RecvBuf[18], RecvBuf[19]);
+      RF_RecvData.Mag.Z       = (s16)Byte16(RecvBuf[20], RecvBuf[21]);
+      RF_RecvData.Baro.Temp   = (u16)Byte16(RecvBuf[22], RecvBuf[23]);
+      RF_RecvData.Baro.Press  = (u32)Byte32(0, RecvBuf[24], RecvBuf[25], RecvBuf[26]);
+      RF_RecvData.Baro.Height = (u32)Byte32(0, RecvBuf[27], RecvBuf[28], RecvBuf[29]);
+      break;
+
+    case 0x03:
+      RF_RecvData.Ang.X       = (s16)Byte16(RecvBuf[4],  RecvBuf[5]);
+      RF_RecvData.Ang.Y       = (s16)Byte16(RecvBuf[6],  RecvBuf[7]);
+      RF_RecvData.Ang.Z       = (s16)Byte16(RecvBuf[8],  RecvBuf[9]);
+      RF_RecvData.Vel.X       = (s16)Byte16(RecvBuf[10], RecvBuf[11]);
+      RF_RecvData.Vel.Y       = (s16)Byte16(RecvBuf[12], RecvBuf[13]);
+      RF_RecvData.Vel.Z       = (s16)Byte16(RecvBuf[14], RecvBuf[15]);
+      RF_RecvData.Pos.X       = (s16)Byte16(RecvBuf[16], RecvBuf[17]);
+      RF_RecvData.Pos.Y       = (s16)Byte16(RecvBuf[18], RecvBuf[19]);
+      RF_RecvData.Pos.Z       = (s16)Byte16(RecvBuf[20], RecvBuf[21]);
+      RF_RecvData.GPS.Lon     = (u32)Byte32(0, RecvBuf[22], RecvBuf[23], RecvBuf[24]);
+      RF_RecvData.GPS.Lat     = (u32)Byte32(0, RecvBuf[25], RecvBuf[26], RecvBuf[27]);
+      break;
+
+    default:
+      // ERROR
+      break;
+  }
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*
@@ -64,73 +79,72 @@ void Transport_Recv( u8* RecvBuf )
 **功能 : 紀錄發送資料
 **輸入 : SendBuf
 **輸出 : None
-**使用 : Transport_Send(TxBuf[0]);
+**使用 : Transport_Send(TxBuf);
 **=====================================================================================================*/
 /*=====================================================================================================*/
 void Transport_Send( u8* SendBuf )
 {
-  s16 TMP_BUF[16] = {0};
-
-  TMP_BUF[0]  = (s16)(Acc.TrueX*1000);  // 1 mg/LSB
-  TMP_BUF[1]  = (s16)(Acc.TrueY*1000);  // 1 mg/LSB
-  TMP_BUF[2]  = (s16)(Acc.TrueZ*1000);  // 1 mg/LSB
-//  TMP_BUF[0]  = (s16)(Acc.X);  // 1 mg/LSB
-//  TMP_BUF[1]  = (s16)(Acc.Y);  // 1 mg/LSB
-//  TMP_BUF[2]  = (s16)(Acc.Z);  // 1 mg/LSB
-  TMP_BUF[3]  = (s16)(Gyr.TrueX*100);   // 10 mdps/LSB
-  TMP_BUF[4]  = (s16)(Gyr.TrueY*100);   // 10 mdps/LSB
-  TMP_BUF[5]  = (s16)(Gyr.TrueZ*100);   // 10 mdps/LSB
-  TMP_BUF[6]  = (s16)(Mag.TrueX);       // 10 nTesla/LSB
-  TMP_BUF[7]  = (s16)(Mag.TrueY);       // 10 nTesla/LSB
-  TMP_BUF[8]  = (s16)(Mag.TrueZ);       // 10 nTesla/LSB
-//  TMP_BUF[6]  = (s16)(Acc.OffsetX);       // 10 nTesla/LSB
-//  TMP_BUF[7]  = (s16)(Acc.OffsetY);       // 10 nTesla/LSB
-//  TMP_BUF[8]  = (s16)(Acc.OffsetZ);       // 10 nTesla/LSB
-  TMP_BUF[9]  = (s16)(AngE.Pitch*100);  // 10 mdeg/LSB
-  TMP_BUF[10] = (s16)(AngE.Roll*100);   // 10 mdeg/LSB
-  TMP_BUF[11] = (s16)(AngE.Yaw*10);     // 100 mdeg/LSB
-  TMP_BUF[12] = (s16)(Temp.TrueT*100);  // 0.01 degC/LSB
-  TMP_BUF[13] = (s16)(Baro.Temp*100);   // 0.01 degC/LSB
-  TMP_BUF[14] = (s16)(Baro.Press*10);   // 0.1 mbar/LSB
-  TMP_BUF[15] = (s16)(Baro.High);
-
-  SendBuf[0]  = (u8)(0x01);
-  SendBuf[1]  = (u8)(0x02);
-  SendBuf[2]  = (u8)(TMP_BUF[0]);       // Acc X-Axis
-  SendBuf[3]  = (u8)(TMP_BUF[0] >> 8);  // ACC X-Axis
-  SendBuf[4]  = (u8)(TMP_BUF[1]);       // ACC Y-Axis
-  SendBuf[5]  = (u8)(TMP_BUF[1] >> 8);  // ACC Y-Axis
-  SendBuf[6]  = (u8)(TMP_BUF[2]);       // ACC Z-Axis
-  SendBuf[7]  = (u8)(TMP_BUF[2] >> 8);  // ACC Z-Axis
-  SendBuf[8]  = (u8)(TMP_BUF[3]);       // Gyr X-Axis
-  SendBuf[9]  = (u8)(TMP_BUF[3] >> 8);  // Gyr X-Axis
-  SendBuf[10] = (u8)(TMP_BUF[4]);       // Gyr Y-Axis
-  SendBuf[11] = (u8)(TMP_BUF[4] >> 8);  // Gyr Y-Axis
-  SendBuf[12] = (u8)(TMP_BUF[5]);       // Gyr Z-Axis
-  SendBuf[13] = (u8)(TMP_BUF[5] >> 8);  // Gyr Z-Axis
-//  SendBuf[14] = (u8)(TMP_BUF[6]);       // Mag X-Axis
-//  SendBuf[15] = (u8)(TMP_BUF[6] >> 8);  // Mag X-Axis
-//  SendBuf[16] = (u8)(TMP_BUF[7]);       // Mag Y-Axis
-//  SendBuf[17] = (u8)(TMP_BUF[7] >> 8);  // Mag Y-Axis
-//  SendBuf[18] = (u8)(TMP_BUF[8]);       // Mag Z-Axis
-//  SendBuf[19] = (u8)(TMP_BUF[8] >> 8);  // Mag Z-Axis
-  SendBuf[14] = (u8)(Tmp_PID_KP);
-  SendBuf[15] = (u8)(Tmp_PID_KP >> 8);
-  SendBuf[16] = (u8)(Tmp_PID_KI);
-  SendBuf[17] = (u8)(Tmp_PID_KI >> 8);
-  SendBuf[18] = (u8)(Tmp_PID_KD);
-  SendBuf[19] = (u8)(Tmp_PID_KD >> 8);
-
-  SendBuf[20] = (u8)(TMP_BUF[9]);       // Ang Pitch
-  SendBuf[21] = (u8)(TMP_BUF[9] >> 8);  // Ang Pitch
-  SendBuf[22] = (u8)(TMP_BUF[10]);      // Ang Roll
-  SendBuf[23] = (u8)(TMP_BUF[10] >> 8); // Ang Roll
-  SendBuf[24] = (u8)(TMP_BUF[11]);      // Ang Yaw
-  SendBuf[25] = (u8)(TMP_BUF[11] >> 8); // Ang Yaw
-  SendBuf[28] = (u8)(Tmp_PID_Pitch);
-  SendBuf[29] = (u8)(Tmp_PID_Pitch >> 8);
-  SendBuf[30] = (u8)(Time_Sec);
-  SendBuf[31] = (u8)(Time_Min);
+  SendBuf[0]  = 0;
+  SendBuf[1]  = 0;
+  SendBuf[2]  = 0;
+  SendBuf[3]  = 0;
+  SendBuf[4]  = 0;
+  SendBuf[5]  = 0;
+  SendBuf[6]  = 0;
+  SendBuf[7]  = 0;
+  SendBuf[8]  = 0;
+  SendBuf[9]  = 0;
+  SendBuf[10] = 0;
+  SendBuf[11] = 0;
+  SendBuf[12] = 0;
+  SendBuf[13] = 0;
+  SendBuf[14] = 0;
+  SendBuf[15] = 0;
+  SendBuf[16] = 0;
+  SendBuf[17] = 0;
+  SendBuf[18] = 0;
+  SendBuf[19] = 0;
+  SendBuf[20] = 0;
+  SendBuf[21] = 0;
+  SendBuf[22] = 0;
+  SendBuf[23] = 0;
+  SendBuf[24] = 0;
+  SendBuf[25] = 0;
+  SendBuf[26] = 0;
+  SendBuf[27] = 0;
+  SendBuf[28] = 0;
+  SendBuf[29] = 0;
+  SendBuf[30] = 0;
+  SendBuf[31] = 0;
 }
+//  KEYR_J    = (u16)RecvBuf[0];
+//  KEYR_U    = (u16)RecvBuf[1];
+//  KEYR_D    = (u16)RecvBuf[2];
+//  KEYR_L    = (u16)RecvBuf[3];
+//  KEYR_R    = (u16)RecvBuf[4];
+//  KEYR_S1   = (u16)RecvBuf[5];
+//  KEYR_S2   = (u16)RecvBuf[6];
+//  KEYL_J    = (u16)RecvBuf[7];
+//  KEYL_U    = (u16)RecvBuf[8];
+//  KEYL_D    = (u16)RecvBuf[9];
+//  KEYL_L    = (u16)RecvBuf[10];
+//  KEYL_R    = (u16)RecvBuf[11];
+//  KEYL_S1   = (u16)RecvBuf[12];
+//  KEYL_S2   = (u16)RecvBuf[13];
+//  Exp_Pitch = (u16)((RecvBuf[15] << 8) | RecvBuf[14]);
+//  Exp_Roll  = (u16)((RecvBuf[17] << 8) | RecvBuf[16]);
+////   JSR_X     = (u16)((RecvBuf[15] << 8) | RecvBuf[14]);
+////   JSR_Y     = (u16)((RecvBuf[17] << 8) | RecvBuf[16]);
+//  JSR_Z     = (u16)((RecvBuf[19] << 8) | RecvBuf[18]);
+//  Exp_Yaw   = (u16)((RecvBuf[21] << 8) | RecvBuf[20]);
+//  Exp_Thr   = (u16)((RecvBuf[23] << 8) | RecvBuf[22]);
+////   JSL_X     = (u16)((RecvBuf[21] << 8) | RecvBuf[20]);
+////   JSL_Y     = (u16)((RecvBuf[23] << 8) | RecvBuf[22]);
+//  JSL_Z     = (u16)((RecvBuf[25] << 8) | RecvBuf[24]);
+////   Exp_Pitch = (u16)((RecvBuf[27] << 8) | RecvBuf[26]);
+////   Exp_Roll  = (u16)((RecvBuf[29] << 8) | RecvBuf[28]);
+////   Exp_Thr   = (u16)((RecvBuf[31] << 8) | RecvBuf[30]);
+//  RecvTime_Sec = (u8)(RecvBuf[30]);
+//  RecvTime_Min = (u8)(RecvBuf[31]);
 /*=====================================================================================================*/
 /*=====================================================================================================*/

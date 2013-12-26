@@ -1,45 +1,75 @@
-/* #include "QCopterFC_transport.h" */
+/* #include "QCopterRC_transport.h" */
 
-#ifndef __QCOPTERFC_TRANSPORT_H
-#define __QCOPTERFC_TRANSPORT_H
+#ifndef __QCOPTERRC_TRANSPORT_H
+#define __QCOPTERRC_TRANSPORT_H
 
 #include "stm32f4xx.h"
-/*=====================================================================================================*/
-/*=====================================================================================================*/
-#define KeyNums			32
-
-#define KEYR_J      RecvData[0]
-#define KEYR_U      RecvData[1]
-#define KEYR_D      RecvData[2]
-#define KEYR_L      RecvData[3]
-#define KEYR_R      RecvData[4]
-#define KEYR_S1     RecvData[5]
-#define KEYR_S2     RecvData[6]
-#define KEYL_J      RecvData[7]
-#define KEYL_U      RecvData[8]
-#define KEYL_D      RecvData[9]
-#define KEYL_L      RecvData[10]
-#define KEYL_R      RecvData[11]
-#define KEYL_S1     RecvData[12]
-#define KEYL_S2     RecvData[13]
-#define JSR_X       RecvData[14]
-#define JSR_Y       RecvData[15]
-#define JSR_Z       RecvData[16]
-#define JSL_X       RecvData[17]
-#define JSL_Y       RecvData[18]
-#define JSL_Z       RecvData[19]
-
-#define Exp_Pitch   RecvData[20]
-#define Exp_Roll    RecvData[21]
-#define Exp_Yaw     RecvData[22]
-#define Exp_Thr     RecvData[23]
+/*====================================================================================================*/
+/*====================================================================================================*/
+typedef struct {
+  u8 Min;
+  u8 Sec;
+  u8 mSec;
+} TRSTRUCT_TIME;
+typedef struct {
+  u16 KP;
+  u16 KI;
+  u16 KD;
+} TRSTRUCT_PID;
+typedef struct {
+  u16 CH1;
+  u16 CH2;
+  u16 CH3;
+  u16 CH4;
+  u16 CH5;
+  u16 CH6;
+} TRSTRUCT_THROTTLE;
+typedef struct {
+  u8 Vol;
+  u8 Cur;
+  u16 Cap;
+} TRSTRUCT_BATTERY;
+typedef struct {
+  s16 X;
+  s16 Y;
+  s16 Z;
+} TRSTRUCT_SENSOR;
+typedef struct {
+  u16 Temp;
+  u32 Press;
+  u32 Height;
+} TRSTRUCT_BAROMETER;
+typedef struct {
+  s16 X;
+  s16 Y;
+  s16 Z;
+} TRSTRUCT_MOTION;
+typedef struct {
+  u32 Lon;
+  u32 Lat;
+} TRSTRUCT_GPS;
+typedef __IO struct {
+  u8 Packet;
+  TRSTRUCT_TIME      Time;
+  TRSTRUCT_PID       PID;
+  TRSTRUCT_THROTTLE  Thr;
+  TRSTRUCT_BATTERY   Batery;
+  TRSTRUCT_SENSOR    Acc;
+  TRSTRUCT_SENSOR    Gyr;
+  TRSTRUCT_SENSOR    Mag;
+  TRSTRUCT_BAROMETER Baro;
+  TRSTRUCT_MOTION    Ang;
+  TRSTRUCT_MOTION    Vel;
+  TRSTRUCT_MOTION    Pos;
+  TRSTRUCT_GPS       GPS;
+} TR_RECV_DATA;
+/*====================================================================================================*/
+/*====================================================================================================*/
+extern TR_RECV_DATA RF_RecvData;
 /*====================================================================================================*/
 /*====================================================================================================*/
 void Transport_Recv( u8* RecvBuf );
 void Transport_Send( u8* SendBuf );
-/*====================================================================================================*/
-/*====================================================================================================*/
-extern vu16 RecvData[KeyNums];
 /*====================================================================================================*/
 /*====================================================================================================*/
 #endif

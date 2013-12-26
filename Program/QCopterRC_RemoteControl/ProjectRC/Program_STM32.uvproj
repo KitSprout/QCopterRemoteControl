@@ -549,14 +549,14 @@
               <FilePath>..\Program_System\QCopterRC_board.c</FilePath>
             </File>
             <File>
+              <FileName>QCopterRC_transport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Program_System\QCopterRC_transport.c</FilePath>
+            </File>
+            <File>
               <FileName>QCopterRC_windows.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Program_System\QCopterRC_windows.c</FilePath>
-            </File>
-            <File>
-              <FileName>QCopterRC_userInterface.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Program_System\QCopterRC_userInterface.c</FilePath>
             </File>
             <File>
               <FileName>system_waveForm.c</FileName>

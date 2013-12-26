@@ -7,18 +7,21 @@
 /*=====================================================================================================*/
 void WaveFormInit( WaveForm_Struct* WaveForm )
 {
-  WaveForm->Channel = 3;
+  WaveForm->Channel = 4;
   WaveForm->WindowColor = WHITE;
   WaveForm->BackColor = BLACK;
   WaveForm->Data[0] = 0;
   WaveForm->Data[1] = 0;
   WaveForm->Data[2] = 0;
+  WaveForm->Data[3] = 0;
   WaveForm->Scale[0] = 100;
   WaveForm->Scale[1] = 100;
   WaveForm->Scale[2] = 100;
+  WaveForm->Scale[3] = 100;
   WaveForm->PointColor[0] = RED;
   WaveForm->PointColor[1] = GREEN;
   WaveForm->PointColor[2] = BLUE;
+  WaveForm->PointColor[3] = YELLOW;
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
@@ -44,10 +47,10 @@ void WaveFormPrint( WaveForm_Struct* WaveForm )
       WavePic[i][WaveFormW-1] = CoordiY[i];
   }
   /* 畫邊框 */
-  LCD_DrawLineX(WaveWindowX,           WaveWindowY,            WaveFormW,	 WaveForm->WindowColor);
-  LCD_DrawLineX(WaveWindowX,           WaveWindowY+WaveForm2H, WaveFormW,  WaveForm->WindowColor);
-  LCD_DrawLineY(WaveWindowX,           WaveWindowY,            WaveForm2H, WaveForm->WindowColor);
-  LCD_DrawLineY(WaveWindowX+WaveFormW, WaveWindowY,            WaveForm2H, WaveForm->WindowColor);
+  LCD_DrawLineX(WaveWindowX,           WaveWindowY,            WaveFormW,	   WaveForm->WindowColor);
+  LCD_DrawLineX(WaveWindowX,           WaveWindowY+WaveForm2H, WaveFormW,    WaveForm->WindowColor);
+  LCD_DrawLineY(WaveWindowX,           WaveWindowY,            WaveForm2H+1, WaveForm->WindowColor);
+  LCD_DrawLineY(WaveWindowX+WaveFormW, WaveWindowY,            WaveForm2H+1, WaveForm->WindowColor);
   /* 顯示 */
   for(i=0; i<WaveFormW-1; i++) {
     /* 清除上筆數據 */
@@ -66,8 +69,6 @@ void WaveFormPrint( WaveForm_Struct* WaveForm )
         LCD_DrawPixel(WaveWindowX+i, WaveWindowY+WaveFormH-j, WaveForm->WindowColor);
       }
     }
-    /* 畫中線 */
-    LCD_DrawPixel(WaveWindowX+i, WaveWindowY+WaveFormH, WaveForm->WindowColor);
     /* 更新顯示新數據 */
     for(j=0; j<WaveForm->Channel; j++) {
       if(WavePic[j][i] == 0)
@@ -77,6 +78,8 @@ void WaveFormPrint( WaveForm_Struct* WaveForm )
       else
         LCD_DrawPixel(WaveWindowX+i, WaveWindowY+WavePic[j][i], WaveForm->PointColor[j]);
     }
+    /* 畫中線 */
+    LCD_DrawPixel(WaveWindowX+i, WaveWindowY+WaveFormH, WaveForm->WindowColor);
   }
 }
 /*=====================================================================================================*/
