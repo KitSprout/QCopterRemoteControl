@@ -40,6 +40,7 @@ Test
 * QCopterRC ADC
 * QCopterRC FFCSPI-TFT2.2 ( use [TFT_2.2-inch](https://github.com/Hom19910422/TFT_2.2-inch) )
 * QCopterRC FSMC ( Use [TFT_3.5-inch](https://github.com/Hom19910422/TFT_3.5-inch) )
+* QCopterRC KeyBoard
 * QCopterRC LED
 * QCopterRC NRF
 * QCopterRC SDIO ( Use [Fatfs](http://elm-chan.org/fsw/ff/00index_e.html) 0.10 )
@@ -64,7 +65,7 @@ Config
 <img src="https://lh6.googleusercontent.com/-8CqkUnWzeiY/UrczaFQCg1I/AAAAAAAAF9A/zu0XXFit_L0/s1600/QCopterRC_Config_DMA.png" width="800" />
 
 *** 傳輸資料格式 QFC_TO_QRC
-<img src="https://lh3.googleusercontent.com/-eIh5NvuE0aw/UrsPnzmAcZI/AAAAAAAAGDc/mu5YwwC-S1s/s800/QFC_TO_QRC.png" height="678" width="800" />
+<img src="https://lh3.googleusercontent.com/-eIh5NvuE0aw/UrsPnzmAcZI/AAAAAAAAGDc/mu5YwwC-S1s/s1600/QFC_TO_QRC.png" height="678" width="800" />
 
 Schematic
 ========
