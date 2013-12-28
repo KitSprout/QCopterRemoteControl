@@ -2,7 +2,7 @@
 ========
 * Author  : [Hom](https://github.com/Hom19910422)
 * Version : v1.1
-* Update  : 2013/12/26
+* Update  : 2013/12/29
 
 Description
 ========
@@ -22,7 +22,7 @@ Hardware
 * PCB 尺寸 : 155 * 60mm
 * 設計軟體 [Altium Designer 13](http://www.altium.com/en/products/altium-designer) ( [PcbLib](https://github.com/CYACAcademic/AltiumDesigner_PcbLibrary) use AD PcbLib v0.2 )
 
-*** 目前 W5500 電路部分似乎有問題，正在檢查 ...
+*** 目前 W5500 尚未完成測試 ...
 
 <img src="https://lh3.googleusercontent.com/-r6Nh2HrxldA/UrWXRap8O-I/AAAAAAAAFwo/pbTsi6B34RU/s800/QCopterRC_System.png" height="664" width="800" />
 
@@ -35,10 +35,11 @@ Program
 QCopterRC RemoteControl ( 完善中... MDK 5.0, StdPeriph_Lib v1.3 )  
 QCopterRC WaveForm ( MDK 5.0, StdPeriph_Lib v1.3 )
 
-Test
+Example
 ========
 * QCopterRC ADC
 * QCopterRC FFCSPI-TFT2.2 ( use [TFT_2.2-inch](https://github.com/Hom19910422/TFT_2.2-inch) )
+* QCopterRC FLASH
 * QCopterRC FSMC ( Use [TFT_3.5-inch](https://github.com/Hom19910422/TFT_3.5-inch) )
 * QCopterRC KeyBoard
 * QCopterRC LED
