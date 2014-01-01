@@ -30,6 +30,7 @@
 #define RGB565_G(RGB565)            ((u8)((Color&0x07E0)>>5))
 #define RGB565_B(RGB565)            ((u8)(Color&0x001F))
 
+// 輸入 R G B，輸出 RGB565
 #define RGB(C_R, C_G, C_B)  ((u32)(((C_R<<8)&0xF800)|((C_G<<3)&0x07E0)|((C_B>>3)&0x001F)))
 
 #define RED         ((u16)0xF800) /* 紅色 */
@@ -67,10 +68,10 @@ void LCD_SetBackLight( u16 BackLight );
 void LCD_DrawPixel( u16 CoordiX, u16 CoordiY, u16 Color );
 void LCD_DrawLineX( u16 CoordiX, u16 CoordiY, u16 Length, u16 Color );
 void LCD_DrawLineY( u16 CoordiX, u16 CoordiY, u16 Length, u16 Color );
-void LCD_DrawRectangle( u16 CoordiX, u16 CoordiY, u16 Length, u16 Width, u16 Color );
-void LCD_DrawRectangleFill( u16 CoordiX, u16 CoordiY, u16 Length, u16 Width, u16 Color );
+void LCD_DrawRectangle( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, u16 Color );
+void LCD_DrawRectangleFill( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, u16 Color );
 void LCD_DrawCircle( u16 CoordiX, u16 CoordiY, u16 Radius, u16 Color );
-void LCD_DrawPicture( u16 CoordiX, u16 CoordiY, u16 Length, u16 Width, uc8 *Pic );
+void LCD_DrawPicture( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, uc8 *Pic );
 
 void LCD_PutChar1206( u16 CoordiX, u16 CoordiY, u8* ChWord, u16 FontColor, u16 BackColor );
 void LCD_PutChar1608( u16 CoordiX, u16 CoordiY, u8* ChWord, u16 FontColor, u16 BackColor );
@@ -78,7 +79,7 @@ void LCD_PutChar1608_( u16 CoordiX, u16 CoordiY, u8* ChWord, u16 FontColor, u16 
 void LCD_PutStr( u16 CoordiX, u16 CoordiY, u8 *ChWord, u8 FontStyle, u16 FontColor, u16 BackColor );
 void LCD_PutNum( u16 CoordiX, u16 CoordiY, u8 Type, u8 Length, u32 NumData, u16 FontColor, u16 BackColor );
 
-void LCD_TestColoBar( void );
+void LCD_TestColoBar( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height );
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 #endif

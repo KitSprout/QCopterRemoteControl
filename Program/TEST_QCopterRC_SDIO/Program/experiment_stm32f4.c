@@ -1,11 +1,10 @@
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 #include "stm32f4_system.h"
-#include "stm32f4_usart.h"
 #include "stm32f4_sdio.h"
-#include "module_rs232.h"
 #include "module_r61581.h"
 #include "algorithm_string.h"
+
 #include "ff.h"
 #include "diskio.h"
 /*=====================================================================================================*/
@@ -50,7 +49,6 @@ int main( void )
 
   SystemInit();
   GPIO_Config();
-  RS232_Config();
   R61581_Config();
   R61581_Init();
 
@@ -69,23 +67,14 @@ int main( void )
   LCD_PutStr(Axis_X, Axis_Y+16*1, (u8*)" SDIO SD Fatfs demo",     ASCII1608, WHITE, BLACK);
   LCD_PutStr(Axis_X, Axis_Y+16*2, (u8*)"-----------------------", ASCII1608, WHITE, BLACK);
   LCD_PutStr(Axis_X, Axis_Y+16*3, (u8*)" SD Init ... ", ASCII1608, WHITE, BLACK);
-  RS232_SendStr(USART2, (u8*)" \r\n");
-  RS232_SendStr(USART2, (u8*)"----------------------\r\n");
-  RS232_SendStr(USART2, (u8*)"----------------------\r\n");
-  RS232_SendStr(USART2, (u8*)" SDIO SD FatFs demo\r\n");
-  RS232_SendStr(USART2, (u8*)"----------------------\r\n");
-  RS232_SendStr(USART2, (u8*)"----------------------\r\n\r\n");
-  RS232_SendStr(USART2, (u8*)" SD Init ... ");
   while(SD_Init() != SD_OK) {
     LCD_PutStr(Axis_X+8*13, Axis_Y+16*3, (u8*)"Failed!!", ASCII1608, WHITE, BLACK);
-    RS232_SendStr(USART2, (u8*)"Failed!!\r\n");
     while(1) {
       LED_R = ~LED_R;
       Delay_100ms(2);
     }
   }
   LCD_PutStr(Axis_X+8*13, Axis_Y+16*3, (u8*)"OK!!", ASCII1608, WHITE, BLACK);
-  RS232_SendStr(USART2, (u8*)"OK!!\r\n\r\n");
 
   LCD_PutStr(Axis_X,      Axis_Y+16*5,  (u8*)"---- SD Init Info -----", ASCII1608, WHITE, BLACK);
   LCD_PutStr(Axis_X,      Axis_Y+16*6,  (u8*)" Capacity : ", ASCII1608, WHITE, BLACK);
@@ -101,21 +90,6 @@ int main( void )
   LCD_PutNum(Axis_X+8*7,  Axis_Y+16*9,  Type_D, 5, SDCardInfo.RCA, WHITE, BLACK);
   LCD_PutStr(Axis_X+8*12, Axis_Y+16*9,  (u8*)" ", ASCII1608, WHITE, BLACK);
   LCD_PutStr(Axis_X,      Axis_Y+16*10, (u8*)"-----------------------", ASCII1608, WHITE, BLACK);
-  RS232_SendStr(USART2, (u8*)"-----SD Init Info-----\r\n");
-  RS232_SendStr(USART2, (u8*)" Capacity : ");
-  RS232_SendNum(USART2, Type_D, 5, SDCardInfo.CardCapacity>>20);
-  RS232_SendStr(USART2, (u8*)" MB\r\n");
-  RS232_SendStr(USART2, (u8*)" CardBlockSize : ");
-  RS232_SendNum(USART2, Type_D, 5, SDCardInfo.CardBlockSize);
-  RS232_SendStr(USART2, (u8*)"\r\n");
-  RS232_SendStr(USART2, (u8*)" CardType : ");
-  RS232_SendNum(USART2, Type_D, 5, SDCardInfo.CardType);
-  RS232_SendStr(USART2, (u8*)"\r\n");
-  RS232_SendStr(USART2, (u8*)" RCA : ");
-  RS232_SendNum(USART2, Type_D, 5, SDCardInfo.RCA);
-  RS232_SendStr(USART2, (u8*)"\r\n");
-  RS232_SendStr(USART2, (u8*)"----------------------\r\n");
-  RS232_SendStr(USART2, (u8*)"\r\n");
 
   Delay_100ms(1);
   //////////////////// Wait
@@ -130,23 +104,18 @@ int main( void )
   LCD_PutStr(Axis_X, Axis_Y+16*0, (u8*)"-----------------------", ASCII1608, WHITE, BLACK);
   LCD_PutStr(Axis_X, Axis_Y+16*1, (u8*)" SD_Card Read Directory", ASCII1608, WHITE, BLACK);
   LCD_PutStr(Axis_X, Axis_Y+16*2, (u8*)"-----------------------", ASCII1608, WHITE, BLACK);
-  RS232_SendStr(USART2, (u8*)"----------------------\r\n");
-  RS232_SendStr(USART2, (u8*)" SD_Card Read Directory File\r\n");
-  RS232_SendStr(USART2, (u8*)"----------------------\r\n\r\n");
 
   res = f_mount(&FatFs, "", 1);
   res = f_opendir(&dirs, "0:/");
   res = f_readdir(&dirs, &finfo);
   while(res!= FR_OK) {
     LCD_PutStr(Axis_X, Axis_Y+16*3, (u8*)" Fatfs failed!!", ASCII1608, WHITE, BLACK);
-    RS232_SendStr(USART2, (u8*)" FatFs failed!!\r\n");
     while(1) {
       LED_R = ~LED_R;
       Delay_100ms(2);
     }
   }
   LCD_PutStr(Axis_X, Axis_Y+16*3, (u8*)" File name : ", ASCII1608, WHITE, BLACK);
-  RS232_SendStr(USART2, (u8*)" File name : \r\n");
 
   while(finfo.fname[0]) {
     f_readdir(&dirs, &finfo);
@@ -165,9 +134,6 @@ int main( void )
       break;
     }
     FileNum++;
-    RS232_SendStr(USART2, (u8*)" ... ");
-    RS232_SendStr(USART2, (u8*)finfo.fname);
-    RS232_SendStr(USART2, (u8*)"\r\n");
   }
 
   Delay_100ms(1);
@@ -183,54 +149,36 @@ int main( void )
   LCD_PutStr(Axis_X, Axis_Y+16*0, (u8*)"-----------------------", ASCII1608, WHITE, BLACK);
   LCD_PutStr(Axis_X, Axis_Y+16*1, (u8*)" SD_Card Write Data",     ASCII1608, WHITE, BLACK);
   LCD_PutStr(Axis_X, Axis_Y+16*2, (u8*)"-----------------------", ASCII1608, WHITE, BLACK);
-  RS232_SendStr(USART2, (u8*)"-----------------------\r\n");
-  RS232_SendStr(USART2, (u8*)" SD_Card Write Data File\r\n");
-  RS232_SendStr(USART2, (u8*)"-----------------------\r\n\r\n");
 
   LCD_PutStr(Axis_X, Axis_Y+16*3, (u8*)" f_open ... ", ASCII1608, WHITE, BLACK);
-  RS232_SendStr(USART2, (u8*)" f_open ... ");
   res = f_open(&file,"SDCard_K.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
-  if(res==FR_OK) {
+  if(res==FR_OK)
     LCD_PutStr(Axis_X+8*12, Axis_Y+16*3, (u8*)"OK!!", ASCII1608, WHITE, BLACK);
-    RS232_SendStr(USART2, (u8*)"OK!!\r\n");
-  }
-  else {
+  else
     LCD_PutStr(Axis_X+8*12, Axis_Y+16*3, (u8*)"failed!!", ASCII1608, WHITE, BLACK);
-    RS232_SendStr(USART2, (u8*)"failed!!\r\n");
-  }
 
   LCD_PutStr(Axis_X, Axis_Y+16*4, (u8*)" f_write ... ", ASCII1608, WHITE, BLACK);
 
-  RS232_SendStr(USART2, (u8*)" f_write ... ");
   res = f_write(&file, WriteData, 20, &i); 
-  if(res==FR_OK) {
+  if(res==FR_OK)
     LCD_PutStr(Axis_X+8*13, Axis_Y+16*4, (u8*)"OK!!", ASCII1608, WHITE, BLACK);
-    RS232_SendStr(USART2, (u8*)"OK!!\r\n");
-  }
-  else {
+
+  else
     LCD_PutStr(Axis_X+8*13, Axis_Y+16*4, (u8*)"failed!!", ASCII1608, WHITE, BLACK);
-    RS232_SendStr(USART2, (u8*)"failed!!\r\n");
-  }
 
   file.fptr = 0;
 
   LCD_PutStr(Axis_X, Axis_Y+16*5, (u8*)" f_read ... ", ASCII1608, WHITE, BLACK);
-  RS232_SendStr(USART2, (u8*)" f_read ... ");
   res = f_read(&file, ReadBuf, 100, &i);
-  if(res==FR_OK) {
+  if(res==FR_OK)
     LCD_PutStr(Axis_X+8*12, Axis_Y+16*5, (u8*)"OK!!", ASCII1608, WHITE, BLACK);
-    RS232_SendStr(USART2, (u8*)"OK!!\r\n");
-  }
-  else {
+  else
     LCD_PutStr(Axis_X+8*12, Axis_Y+16*5, (u8*)"failed!!", ASCII1608, WHITE, BLACK);
-    RS232_SendStr(USART2, (u8*)"failed!!\r\n");
-  }
 
   f_close(&file);
 
   LCD_PutStr(Axis_X, Axis_Y+16*7, (u8*)" Read String : ", ASCII1608, WHITE, BLACK);
   LCD_PutStr(Axis_X+8*1, Axis_Y+16*8, (u8*)ReadBuf, ASCII1608, WHITE, BLACK);
-  RS232_SendStr(USART2, ReadBuf);
 
   while(1) {
     LED_Y = ~LED_Y;

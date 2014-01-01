@@ -464,19 +464,9 @@
           <GroupName>Driver</GroupName>
           <Files>
             <File>
-              <FileName>stm32f4_system.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Program\stm32f4_system.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f4_delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Program\stm32f4_delay.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Program\stm32f4_usart.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4_sdio.c</FileName>
@@ -518,11 +508,6 @@
         <Group>
           <GroupName>Module</GroupName>
           <Files>
-            <File>
-              <FileName>module_rs232.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Program\module_rs232.c</FilePath>
-            </File>
             <File>
               <FileName>module_r61581.c</FileName>
               <FileType>1</FileType>
