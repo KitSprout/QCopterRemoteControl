@@ -2,13 +2,11 @@
 ========
 * Author  : [Hom](https://github.com/Hom19910422)
 * Version : v1.1
-* Update  : 2013/12/29
+* Update  : 2014/01/01
 
 Description
 ========
-QCopteRC 是一個遙控器，用來與 QCopterFC 溝通、控制，是四軸飛行器的控制裝置，  
-搭載感測器，有體感功能，板子上外接 3.5 吋螢幕，可以將四軸上的回傳回來的資訊顯  
-示出來，並且建立操作介面。
+QCopteRC 是一個遙控器，用來與 QCopterFC 溝通、控制，是四軸飛行器的控制裝置，搭載感測器，有體感功能，板子上外接 3.5 吋螢幕，可以將四軸上的回傳回來的資訊顯示出來，並且建立操作介面。
 
 Hardware
 ========
@@ -42,7 +40,7 @@ Example
 * QCopterRC FLASH
 * QCopterRC FSMC ( Use [TFT_3.5-inch](https://github.com/Hom19910422/TFT_3.5-inch) )
 * QCopterRC KeyBoard
-* QCopterRC LED
+* [QCopterRC LED](https://github.com/Hom19910422/QCopterRemoteControl/tree/master/Program/TEST_QCopterRC_LED)
 * QCopterRC NRF
 * QCopterRC SDIO ( Use [Fatfs](http://elm-chan.org/fsw/ff/00index_e.html) 0.10 )
 * QCopterRC UART
