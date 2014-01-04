@@ -2,7 +2,7 @@
 ========
 * Author  : [Hom](https://github.com/Hom19910422)
 * Version : v1.1
-* Update  : 2014/01/01
+* Update  : 2014/01/04
 
 Description
 ========
@@ -63,8 +63,11 @@ Config
 <img src="https://lh4.googleusercontent.com/-dkd0YtkochY/UrczaIU0xXI/AAAAAAAAF9E/m6ET7IX6QPM/s1600/QCopterRC_Config_AF.png"  width="800" />
 <img src="https://lh6.googleusercontent.com/-8CqkUnWzeiY/UrczaFQCg1I/AAAAAAAAF9A/zu0XXFit_L0/s1600/QCopterRC_Config_DMA.png" width="800" />
 
-*** 傳輸資料格式 QFC_TO_QRC
+*** 傳輸資料格式  
+QFC_TO_QRC  
 <img src="https://lh3.googleusercontent.com/-eIh5NvuE0aw/UrsPnzmAcZI/AAAAAAAAGDc/mu5YwwC-S1s/s1600/QFC_TO_QRC.png" height="678" width="800" />
+QRC_TO_QFC  
+<img src="https://lh4.googleusercontent.com/-U3WhNPhTxHo/UsgUPnOV6bI/AAAAAAAAGJE/AayjWFXOgPI/s800/QRC_TO_QFC.png" height="221" width="800" />
 
 Schematic
 ========
