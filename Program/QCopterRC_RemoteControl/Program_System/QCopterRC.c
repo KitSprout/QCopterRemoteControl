@@ -26,14 +26,11 @@ void System_Init( void )
   nRF24L01_Config();
   R61581_Config();
 
-  Delay_10ms(5);
-
   /* nRF Check */
   while(Sta != SUCCESS)
     Sta = nRF_Check();
 
   R61581_Init();
-
   UserInterface_Init();
 
 //  #define Axis_X 60
@@ -63,8 +60,6 @@ void System_Init( void )
 //  LCD_PutStr(Axis_X+8*12, Axis_Y+16*6, (u8*)" ", ASCII1608, WHITE, BLACK);
 //  LCD_PutStr(Axis_X,      Axis_Y+16*7, (u8*)"-----------------------", ASCII1608, WHITE, BLACK);
 
-  Delay_10ms(5);
-
   UserInterface_MoveSel(WINDOWS_CTRL);
 }
 /*=====================================================================================================*/
@@ -77,26 +72,11 @@ int main( void )
   /* QCopterRC Init */
   System_Init();
 
-//  /* Systick Config */
-//  if(SysTick_Config(SystemCoreClock/100)) {  // 100 Hz
-//    while(1);
-//  }
+  /* Systick Config */
+  if(SysTick_Config(SystemCoreClock/100)) {  // 100 Hz
+    while(1);
+  }
 
-//  while(1) {
-//    KeyBoard_Read();
-//    LCD_PutNum(10, 10+16*0,  Type_D, 5, KEY_RP, WHITE, BLACK);
-//    LCD_PutNum(10, 10+16*1,  Type_D, 5, KEY_RR, WHITE, BLACK);
-//    LCD_PutNum(10, 10+16*2,  Type_D, 5, KEY_RL, WHITE, BLACK);
-//    LCD_PutNum(10, 10+16*3,  Type_D, 5, KEY_LP, WHITE, BLACK);
-//    LCD_PutNum(10, 10+16*4,  Type_D, 5, KEY_LR, WHITE, BLACK);
-//    LCD_PutNum(10, 10+16*5,  Type_D, 5, KEY_LL, WHITE, BLACK);
-//    LCD_PutNum(10, 10+16*6,  Type_D, 5, KEY_PP, WHITE, BLACK);
-//    LCD_PutNum(10, 10+16*7,  Type_D, 5, KEY_PR, WHITE, BLACK);
-//    LCD_PutNum(10, 10+16*8,  Type_D, 5, KEY_PL, WHITE, BLACK);
-//    LCD_PutNum(10, 10+16*9,  Type_D, 5, KEY_S1, WHITE, BLACK);
-//    LCD_PutNum(10, 10+16*10, Type_D, 5, KEY_S2, WHITE, BLACK);
-//    LCD_PutNum(10, 10+16*11, Type_D, 5, KEY_S3, WHITE, BLACK);
-//  }
   /* Final State Machine */
   while(1) {
     LED_G = !LED_G;
@@ -106,6 +86,7 @@ int main( void )
       /************************** FSM TX **************************************/
       case FSM_TX:
         // FSM_TX
+        Transport_Send(TxBuf);
         nRF_TX_Mode();
         nRF_Tx_Data(TxBuf);
         // FSM_TX End
@@ -132,14 +113,14 @@ int main( void )
       case FSM_TFT:
         // FSM_TFT
         #define DeBounce 120
-        if(KEY_PR == 0) {
+        if(KEY_PR == KEY_ON) {
           WindowsMeun_Sel++;
           if(WindowsMeun_Sel == WINDOWS_OUT_R)
             WindowsMeun_Sel = (WINDOWS_MENU)(WINDOWS_OUT_L+1);
           UserInterface_MoveSel(WindowsMeun_Sel);
           Delay_1ms(DeBounce);
         }
-        if(KEY_PL == 0) {
+        if(KEY_PL == KEY_ON) {
           WindowsMeun_Sel--;
           if(WindowsMeun_Sel == WINDOWS_OUT_L)
             WindowsMeun_Sel = (WINDOWS_MENU)(WINDOWS_OUT_R-1);

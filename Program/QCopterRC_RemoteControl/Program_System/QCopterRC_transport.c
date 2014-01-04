@@ -1,11 +1,13 @@
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 #include "stm32f4_system.h"
+#include "QCopterRC_board.h"
 #include "QCopterRC_transport.h"
 #include "module_nrf24l01.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 TR_RECV_DATA RF_RecvData;
+TR_SEND_DATA RF_SendData;
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : Transport_Recv
@@ -17,10 +19,10 @@ TR_RECV_DATA RF_RecvData;
 /*=====================================================================================================*/
 void Transport_Recv( u8* RecvBuf )
 {
-  RF_RecvData.Packet    = (u8)RecvBuf[0];
-  RF_RecvData.Time.Min  = (u8)RecvBuf[1];
-  RF_RecvData.Time.Sec  = (u8)RecvBuf[2];
-  RF_RecvData.Time.mSec = (u8)RecvBuf[3];
+  RF_RecvData.Packet          = (u8)(RecvBuf[0]);
+  RF_RecvData.Time.Min        = (u8)(RecvBuf[1]);
+  RF_RecvData.Time.Sec        = (u8)(RecvBuf[2]);
+  RF_RecvData.Time.mSec       = (u8)(RecvBuf[3]);
 
   switch(RF_RecvData.Packet) {
 
@@ -84,67 +86,56 @@ void Transport_Recv( u8* RecvBuf )
 /*=====================================================================================================*/
 void Transport_Send( u8* SendBuf )
 {
-  SendBuf[0]  = 0;
-  SendBuf[1]  = 0;
-  SendBuf[2]  = 0;
-  SendBuf[3]  = 0;
-  SendBuf[4]  = 0;
-  SendBuf[5]  = 0;
-  SendBuf[6]  = 0;
-  SendBuf[7]  = 0;
-  SendBuf[8]  = 0;
-  SendBuf[9]  = 0;
-  SendBuf[10] = 0;
-  SendBuf[11] = 0;
-  SendBuf[12] = 0;
-  SendBuf[13] = 0;
-  SendBuf[14] = 0;
-  SendBuf[15] = 0;
-  SendBuf[16] = 0;
-  SendBuf[17] = 0;
-  SendBuf[18] = 0;
-  SendBuf[19] = 0;
-  SendBuf[20] = 0;
-  SendBuf[21] = 0;
-  SendBuf[22] = 0;
-  SendBuf[23] = 0;
-  SendBuf[24] = 0;
-  SendBuf[25] = 0;
-  SendBuf[26] = 0;
-  SendBuf[27] = 0;
-  SendBuf[28] = 0;
-  SendBuf[29] = 0;
-  SendBuf[30] = 0;
-  SendBuf[31] = 0;
+  SendBuf[0]  = (u8)(RF_SendData.Packet);
+  SendBuf[1]  = (u8)(RF_SendData.Time.Min);
+  SendBuf[2]  = (u8)(RF_SendData.Time.Sec);
+  SendBuf[3]  = (u8)(RF_SendData.Time.mSec);
+
+  KeyBoard_ReadKEY();
+
+  SendBuf[4]  = (u8)(KEY_RP);
+  SendBuf[5]  = (u8)(KEY_RR);
+  SendBuf[6]  = (u8)(KEY_RL);
+  SendBuf[7]  = (u8)(KEY_LP);
+  SendBuf[8]  = (u8)(KEY_LR);
+  SendBuf[9]  = (u8)(KEY_LL);
+  SendBuf[10] = (u8)(KEY_PP);
+  SendBuf[11] = (u8)(KEY_PR);
+  SendBuf[12] = (u8)(KEY_PL);
+  SendBuf[13] = (u8)(KEY_S1);
+  SendBuf[14] = (u8)(KEY_S2);
+  SendBuf[15] = (u8)(KEY_S3);
+
+  KeyBoard_ReadADC();
+
+  RF_SendData.Ctrl.ThrB  = (s16)(JS_RZ*2.44140625f);
+  RF_SendData.Ctrl.ThrS  = (s16)(JS_LY*2.44140625f-5000);
+  RF_SendData.Ctrl.Pitch = (s16)(JS_RY);
+  RF_SendData.Ctrl.Roll  = (s16)(JS_RX);
+  RF_SendData.Ctrl.Yaw   = (s16)(JS_LX);
+  RF_SendData.Ctrl.Corr  = (s16)(JS_LZ*0.244140625f);
+
+  RF_SendData.Cmd     = (u8)(0);
+  RF_SendData.Data[0] = (u8)(0);
+  RF_SendData.Data[1] = (u8)(0);
+  RF_SendData.Data[2] = (u8)(0);
+
+  SendBuf[16] = (u8)(Byte8H((u16)RF_SendData.Ctrl.ThrB));
+  SendBuf[17] = (u8)(Byte8L((u16)RF_SendData.Ctrl.ThrB));
+  SendBuf[18] = (u8)(Byte8H((u16)RF_SendData.Ctrl.ThrS));
+  SendBuf[19] = (u8)(Byte8L((u16)RF_SendData.Ctrl.ThrS));
+  SendBuf[20] = (u8)(Byte8H((u16)RF_SendData.Ctrl.Pitch));
+  SendBuf[21] = (u8)(Byte8L((u16)RF_SendData.Ctrl.Pitch));
+  SendBuf[22] = (u8)(Byte8H((u16)RF_SendData.Ctrl.Roll));
+  SendBuf[23] = (u8)(Byte8L((u16)RF_SendData.Ctrl.Roll));
+  SendBuf[24] = (u8)(Byte8H((u16)RF_SendData.Ctrl.Yaw));
+  SendBuf[25] = (u8)(Byte8L((u16)RF_SendData.Ctrl.Yaw));
+  SendBuf[26] = (u8)(Byte8H((u16)RF_SendData.Ctrl.Corr));
+  SendBuf[27] = (u8)(Byte8L((u16)RF_SendData.Ctrl.Corr));
+  SendBuf[28] = (u8)(RF_SendData.Cmd);
+  SendBuf[29] = (u8)(RF_SendData.Data[0]);
+  SendBuf[30] = (u8)(RF_SendData.Data[1]);
+  SendBuf[31] = (u8)(RF_SendData.Data[2]);
 }
-//  KEYR_J    = (u16)RecvBuf[0];
-//  KEYR_U    = (u16)RecvBuf[1];
-//  KEYR_D    = (u16)RecvBuf[2];
-//  KEYR_L    = (u16)RecvBuf[3];
-//  KEYR_R    = (u16)RecvBuf[4];
-//  KEYR_S1   = (u16)RecvBuf[5];
-//  KEYR_S2   = (u16)RecvBuf[6];
-//  KEYL_J    = (u16)RecvBuf[7];
-//  KEYL_U    = (u16)RecvBuf[8];
-//  KEYL_D    = (u16)RecvBuf[9];
-//  KEYL_L    = (u16)RecvBuf[10];
-//  KEYL_R    = (u16)RecvBuf[11];
-//  KEYL_S1   = (u16)RecvBuf[12];
-//  KEYL_S2   = (u16)RecvBuf[13];
-//  Exp_Pitch = (u16)((RecvBuf[15] << 8) | RecvBuf[14]);
-//  Exp_Roll  = (u16)((RecvBuf[17] << 8) | RecvBuf[16]);
-////   JSR_X     = (u16)((RecvBuf[15] << 8) | RecvBuf[14]);
-////   JSR_Y     = (u16)((RecvBuf[17] << 8) | RecvBuf[16]);
-//  JSR_Z     = (u16)((RecvBuf[19] << 8) | RecvBuf[18]);
-//  Exp_Yaw   = (u16)((RecvBuf[21] << 8) | RecvBuf[20]);
-//  Exp_Thr   = (u16)((RecvBuf[23] << 8) | RecvBuf[22]);
-////   JSL_X     = (u16)((RecvBuf[21] << 8) | RecvBuf[20]);
-////   JSL_Y     = (u16)((RecvBuf[23] << 8) | RecvBuf[22]);
-//  JSL_Z     = (u16)((RecvBuf[25] << 8) | RecvBuf[24]);
-////   Exp_Pitch = (u16)((RecvBuf[27] << 8) | RecvBuf[26]);
-////   Exp_Roll  = (u16)((RecvBuf[29] << 8) | RecvBuf[28]);
-////   Exp_Thr   = (u16)((RecvBuf[31] << 8) | RecvBuf[30]);
-//  RecvTime_Sec = (u8)(RecvBuf[30]);
-//  RecvTime_Min = (u8)(RecvBuf[31]);
 /*=====================================================================================================*/
 /*=====================================================================================================*/

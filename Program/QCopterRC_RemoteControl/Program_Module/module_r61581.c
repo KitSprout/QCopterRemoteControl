@@ -164,7 +164,7 @@ void R61581_BLigConfig( void )
   TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);           // 致能 TIM3 OC1 預裝載
 
   /* 啟動 */
-  TIM_ARRPreloadConfig(TIM3, ENABLE);                         // 致能 TIM3 重載寄存器ARR
+  TIM_ARRPreloadConfig(TIM3, ENABLE);                         // 致能 TIM3 重載寄存器 ARR
   TIM_Cmd(TIM3, ENABLE);                                      // 致能 TIM3
 
   LCD_LIG = 0;

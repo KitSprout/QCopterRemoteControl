@@ -65,9 +65,12 @@ static void MenuCtrl_WorkTime_Init( void );
 static void MenuCtrl_WorkTime( void );
 static void MenuCtrl_Power_Init( void );
 static void MenuCtrl_Power( void );
-
+static void MenuTrack_Info_Init( void );
+static void MenuTrack_Info( void );
 static void MenuWave_WaveFrom_Init( void );
 static void MenuWave_WaveFrom( WAVEFORM_SEL WaveForm_Sel );
+static void MenuTest_KeyBoard_Init( void );
+static void MenuTest_KeyBoard( void );
 
 static void Windows_DrawMenu( void );
 static void Windows_SelMenu( u16 CoordiX, u32 SColor, u32 BColor );

@@ -8,15 +8,10 @@
 #define NRF_CSN   PAO(15) // PA15
 #define NRF_CE    PBO(6)  // PB6
 #define NRF_IRQ   PBI(7)  // PB7
-
-#define LED_R   PCO(15)
-#define LED_G   PCO(14)
-#define LED_B   PCO(13)
-#define LED_Y   PEO(6)
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-u8 TxBuf[TxBufSize] = {0};
-u8 RxBuf[RxBufSize] = {0};
+u8 TxBuf[TXBUF_SIZE] = {0};
+u8 RxBuf[RXBUF_SIZE] = {0};
 
 u8 TX_ADDRESS[TX_ADR_WIDTH] = { 0x34,0x43,0x10,0x10,0x01 };   // 定義一個靜態發送地址
 u8 RX_ADDRESS[RX_ADR_WIDTH] = { 0x34,0x43,0x10,0x10,0x01 };
@@ -44,7 +39,7 @@ void nRF24L01_Config( void )
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource4, GPIO_AF_SPI3);
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource5, GPIO_AF_SPI3);
 
-	NVIC_InitStruct.NVIC_IRQChannel = EXTI9_5_IRQn; //EXTI9_5_IRQn
+	NVIC_InitStruct.NVIC_IRQChannel = EXTI9_5_IRQn;
 	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0x00;
 	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0x00;
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
@@ -55,33 +50,26 @@ void nRF24L01_Config( void )
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStruct);
 	/* CE PB6 */
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOB, &GPIO_InitStruct);
 	/* IRQ PB7 */
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_7;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOB, &GPIO_InitStruct);
-//  /* IRQ PB7 */
-//  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_7;
-//  GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
-//  GPIO_InitStruct.GPIO_OType = GPIO_OType_OD;
-//  GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
-//  GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
-//  GPIO_Init(GPIOB, &GPIO_InitStruct);
 	/* SCK PB3  */  /* MISO PB4  */  /* MOSI PB5  */
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 	/* IRQ EXTI */
@@ -96,14 +84,15 @@ void nRF24L01_Config( void )
 
   SPI_InitStruct.SPI_Direction = SPI_Direction_2Lines_FullDuplex;   // 雙線全雙工
   SPI_InitStruct.SPI_Mode = SPI_Mode_Master;                        // 主模式
-  SPI_InitStruct.SPI_DataSize = SPI_DataSize_8b;                    // 數據大小8位
+  SPI_InitStruct.SPI_DataSize = SPI_DataSize_8b;                    // 數據大小 8 位
   SPI_InitStruct.SPI_CPOL = SPI_CPOL_Low;                           // 時鐘極性，空閒時為低
-  SPI_InitStruct.SPI_CPHA = SPI_CPHA_1Edge;                         // 第1個邊沿有效，上升沿為采樣時刻
-  SPI_InitStruct.SPI_NSS = SPI_NSS_Soft;                            // NSS信號由軟件產生
-  SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;   // 8分頻，9MHz
+  SPI_InitStruct.SPI_CPHA = SPI_CPHA_1Edge;                         // 第 1 個邊沿有效，上升沿為采樣時刻
+  SPI_InitStruct.SPI_NSS = SPI_NSS_Soft;                            // NSS 信號由軟體產生
+  SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;   // 4 分頻，10.5 MHz
   SPI_InitStruct.SPI_FirstBit = SPI_FirstBit_MSB;                   // 高位在前
   SPI_InitStruct.SPI_CRCPolynomial = 7;
   SPI_Init(nRF_SPI, &SPI_InitStruct);
+
 	SPI_Cmd(nRF_SPI, ENABLE);
 }
 /*=====================================================================================================*/
@@ -223,12 +212,12 @@ void nRF_ReadBuf( u8 ReadAddr, u8 *ReadBuf, u8 Bytes )
 void nRF_RX_Mode( void )
 {
   NRF_CE = 0;
-  nRF_WriteBuf(NRF_WRITE+RX_ADDR_P0, RX_ADDRESS, RX_ADR_WIDTH);   // 寫 RX 節點地址
-  nRF_WriteReg(NRF_WRITE+EN_AA, 0x01);              // 使能通道0的自動應答
-  nRF_WriteReg(NRF_WRITE+EN_RXADDR, 0x01);          // 使能通道0的接收地址
+  nRF_WriteBuf(NRF_WRITE+RX_ADDR_P0, RX_ADDRESS, RX_ADR_WIDTH);   // 寫RX節點地址
+  nRF_WriteReg(NRF_WRITE+EN_AA, 0x01);              // 使能通道 0 的自動應答
+  nRF_WriteReg(NRF_WRITE+EN_RXADDR, 0x01);          // 使能通道 0 的接收地址
   nRF_WriteReg(NRF_WRITE+RF_CH, CHANAL);            // 設置 RF 通信頻率
   nRF_WriteReg(NRF_WRITE+RX_PW_P0, RX_PLOAD_WIDTH); // 選擇通道0的有效數據寬度
-  nRF_WriteReg(NRF_WRITE+RF_SETUP, 0x0f);           // 設置 TX 發射參數, 0db增益, 2Mbps, 低噪聲增益開啟
+  nRF_WriteReg(NRF_WRITE+RF_SETUP, 0x0f);           // 設置TX發射參數, 0db增益, 2Mbps, 低噪聲增益開啟
   nRF_WriteReg(NRF_WRITE+CONFIG, 0x0f);             // 配置基本工作模式的參數; PWR_UP, EN_CRC, 16BIT_CRC, 接收模式
   NRF_CE = 1;
 }
@@ -245,16 +234,16 @@ void nRF_TX_Mode( void )
 {
   NRF_CE = 0;
   nRF_WriteBuf(NRF_WRITE+TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);    // 寫 TX 節點地址
-  nRF_WriteBuf(NRF_WRITE+RX_ADDR_P0, RX_ADDRESS, RX_ADR_WIDTH); // 設置 TX 節點地址, 主要為了使能ACK
-  nRF_WriteReg(NRF_WRITE+EN_AA, 0x01);      // 使能通道0的自動應答
-  nRF_WriteReg(NRF_WRITE+EN_RXADDR, 0x01);  // 使能通道0的接收地址
-  nRF_WriteReg(NRF_WRITE+SETUP_RETR, 0x05); // 設置自動重發間隔時間: 250us + 86us; 最大自動重發次數: 5 次
-  nRF_WriteReg(NRF_WRITE+RF_CH, CHANAL);    // 設置 RF 通道為CHANAL
+  nRF_WriteBuf(NRF_WRITE+RX_ADDR_P0, RX_ADDRESS, RX_ADR_WIDTH); // 設置 TX 節點地址, 主要為了使能 ACK
+  nRF_WriteReg(NRF_WRITE+EN_AA, 0x01);      // 使能通道 0 的自動應答
+  nRF_WriteReg(NRF_WRITE+EN_RXADDR, 0x01);  // 使能通道 0 的接收地址
+  nRF_WriteReg(NRF_WRITE+SETUP_RETR, 0x05); // 設置自動重發間隔時間 : 250us + 86us，最大自動重發次數 : 5 次
+  nRF_WriteReg(NRF_WRITE+RF_CH, CHANAL);    // 設置 RF 通道為 CHANAL
   nRF_WriteReg(NRF_WRITE+RF_SETUP, 0x0f);   // 設置 TX 發射參數, 0db增益, 2Mbps, 低噪聲增益開啟
   nRF_WriteReg(NRF_WRITE+CONFIG, 0x0e);     // 配置基本工作模式的參數; PWR_UP, EN_CRC, 16BIT_CRC, 發射模式, 開啟所有中斷
   NRF_CE = 1;
 
-  Delay_1us(12);  // CE 要拉高一段時間才進入發送模式
+//  Delay_1us(12);  // CE 要拉高一段時間才進入發送模式
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*
@@ -277,7 +266,7 @@ u8 nRF_Check( void )
   for(i=0; i<5; i++)
     if(RecvBuf[i]!=SendBuf[i])  break;
 
-  return (i==5) ? SUCCESS : ERROR;
+  return ((i==5) ? SUCCESS : ERROR);
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*
@@ -290,20 +279,20 @@ u8 nRF_Check( void )
 /*=====================================================================================================*/
 u8 nRF_Tx_Data( u8 *TxBuf )
 {
-  u8 Sta;
+  u8 Status = ERROR;;
 
   NRF_CE = 0;
   nRF_WriteBuf(WR_TX_PLOAD, TxBuf, TX_PLOAD_WIDTH);
   NRF_CE = 1;
 
   while(NRF_IRQ!=0);
-  Sta = nRF_ReadReg(STATUS);
-  nRF_WriteReg(NRF_WRITE+STATUS, Sta);
+  Status = nRF_ReadReg(STATUS);
+  nRF_WriteReg(NRF_WRITE+STATUS, Status);
   nRF_WriteReg(FLUSH_TX, NOP);
 
-  if(Sta&MAX_RT)
+  if(Status&MAX_RT)
     return MAX_RT;
-  else if(Sta&TX_DS)
+  else if(Status&TX_DS)
     return TX_DS;
   else
     return ERROR;
@@ -319,22 +308,23 @@ u8 nRF_Tx_Data( u8 *TxBuf )
 /*=====================================================================================================*/
 u8 nRF_Rx_Data( u8 *RxBuf )
 {
-  u8 Sta;
+  u8 Status = ERROR;
 
   NRF_CE = 1;
   while(NRF_IRQ!=0);
   NRF_CE = 0;
 
-  Sta = nRF_ReadReg(STATUS);
-  nRF_WriteReg(NRF_WRITE+STATUS, Sta);
+  Status = nRF_ReadReg(STATUS);
+  nRF_WriteReg(NRF_WRITE+STATUS, Status);
 
-  if(Sta&RX_DR) {
+  if(Status&RX_DR) {
     nRF_ReadBuf(RD_RX_PLOAD, RxBuf, RX_PLOAD_WIDTH);
     nRF_WriteReg(FLUSH_RX, NOP);
     return RX_DR;
   }
-  else
+  else {
     return ERROR;
+  }
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/

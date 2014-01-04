@@ -8,7 +8,7 @@
 **功能 : 數值轉字串
 **輸入 : Type, NumLen, *CharData, NumData
 **輸出 : None
-**使用 : Str_NumToChar(Type_O, 6, TrData, Data)
+**使用 : Str_NumToChar(Type_O, 6, TrData, Data);
 **=====================================================================================================*/
 /*=====================================================================================================*/
 void Str_NumToChar( u8 Type, u8 NumLen, u8 *CharData, s32 NumData )

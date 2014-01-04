@@ -34,8 +34,9 @@ void UserInterface_MoveSel( WINDOWS_MENU MenuSel )
       MenuCtrl_Power_Init();
       break;
     case WINDOWS_TRACK:
-      Windows_Clear(GREEN);
+      Windows_Clear(BLACK);
       Windows_SelMenu(Windows_SelMenu_2, WHITE, BLACK);
+      MenuTrack_Info_Init();
       break;
     case WINDOWS_WAVE:
       Windows_Clear(BLACK);
@@ -53,22 +54,7 @@ void UserInterface_MoveSel( WINDOWS_MENU MenuSel )
     case WINDOWS_TEST:
       Windows_Clear(BLACK);
       Windows_SelMenu(Windows_SelMenu_6, WHITE, BLACK);
-
-      #define Axis_CIR_X 118
-      #define Axis_CIR_Y 220
-      LCD_DrawCircle(Axis_CIR_X,     Axis_CIR_Y-100, 102, WHITE);
-      LCD_DrawCircle(Axis_CIR_X,     Axis_CIR_Y-100, 101, WHITE);
-      LCD_DrawCircle(Axis_CIR_X+240, Axis_CIR_Y-100, 102, WHITE);
-      LCD_DrawCircle(Axis_CIR_X+240, Axis_CIR_Y-100, 101, WHITE);
-
-      #define Axis_KEY_X 20
-      #define Axis_KEY_Y 240
-      LCD_PutStr(Axis_KEY_X+8*35, Axis_KEY_Y+16*0, (u8*)"LX:", ASCII1608, WHITE, BLACK);
-      LCD_PutStr(Axis_KEY_X+8*35, Axis_KEY_Y+16*1, (u8*)"LY:", ASCII1608, WHITE, BLACK);
-      LCD_PutStr(Axis_KEY_X+8*35, Axis_KEY_Y+16*2, (u8*)"LZ:", ASCII1608, WHITE, BLACK);
-      LCD_PutStr(Axis_KEY_X+8*47, Axis_KEY_Y+16*0, (u8*)"RX:", ASCII1608, WHITE, BLACK);
-      LCD_PutStr(Axis_KEY_X+8*47, Axis_KEY_Y+16*1, (u8*)"RY:", ASCII1608, WHITE, BLACK);
-      LCD_PutStr(Axis_KEY_X+8*47, Axis_KEY_Y+16*2, (u8*)"RZ:", ASCII1608, WHITE, BLACK);
+      MenuTest_KeyBoard_Init();
       break;
     case WINDOWS_CONF:
       Windows_Clear(YELLOW);
@@ -81,44 +67,8 @@ void UserInterface_MoveSel( WINDOWS_MENU MenuSel )
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-void MoveCirR( u16 CoordiX, u16 CoordiY, u16 Radius, u16 LineColor, u16 BackColor )
-{
-  static u32 clearColor = 0;
-  static u16 tmpRadius = 0;
-  static u16 tmpCoordiX = 0, tmpCoordiY = 0;
-
-  LCD_DrawCircle(tmpCoordiX, tmpCoordiY, tmpRadius, clearColor);
-  LCD_DrawCircle(tmpCoordiX, tmpCoordiY, tmpRadius, clearColor);
-
-  tmpRadius = Radius;
-  clearColor = BackColor;
-  tmpCoordiX = CoordiX;
-  tmpCoordiY = CoordiY;
-
-  LCD_DrawCircle(CoordiX, CoordiY, Radius, LineColor);
-  LCD_DrawCircle(CoordiX, CoordiY, Radius, LineColor);
-}
-void MoveCirL( u16 CoordiX, u16 CoordiY, u16 Radius, u16 LineColor, u16 BackColor )
-{
-  static u32 clearColor = 0;
-  static u16 tmpRadius = 0;
-  static u16 tmpCoordiX = 0, tmpCoordiY = 0;
-
-  LCD_DrawCircle(tmpCoordiX, tmpCoordiY, tmpRadius, clearColor);
-  LCD_DrawCircle(tmpCoordiX, tmpCoordiY, tmpRadius, clearColor);
-
-  tmpRadius = Radius;
-  clearColor = BackColor;
-  tmpCoordiX = CoordiX;
-  tmpCoordiY = CoordiY;
-
-  LCD_DrawCircle(CoordiX, CoordiY, Radius, LineColor);
-  LCD_DrawCircle(CoordiX, CoordiY, Radius, LineColor);
-}
-
 void UserInterface_Update( WINDOWS_MENU MenuSel )
 {
-  u16 ADC_AveTr[6] = {0};
   static WAVEFORM_SEL WaveForm_Sel = WAVEFORM_TEST;
 
   switch(MenuSel) {
@@ -132,19 +82,19 @@ void UserInterface_Update( WINDOWS_MENU MenuSel )
 
     /************************** FSM TRACK *************************************/
     case WINDOWS_TRACK:   // 3D 追蹤
-
+      MenuTrack_Info();
       break;
 
     /************************** FSM WAVE **************************************/
     case WINDOWS_WAVE:    // 示波器
       #define DeBounce 120
-      if(KEY_S3==1) {
+      if(KEY_S3 == KEY_ON) {
         WaveForm_Sel++;
         if(WaveForm_Sel == WAVEFORM_OUT_R)
           WaveForm_Sel = (WAVEFORM_SEL)(WAVEFORM_OUT_L+1);
         Delay_1ms(DeBounce);
       }
-      if(KEY_S1==1) {
+      if(KEY_S1 == KEY_ON) {
         WaveForm_Sel--;
         if(WaveForm_Sel == WAVEFORM_OUT_L)
           WaveForm_Sel = (WAVEFORM_SEL)(WAVEFORM_OUT_R-1);
@@ -175,46 +125,7 @@ void UserInterface_Update( WINDOWS_MENU MenuSel )
 
     /************************** FSM TEST **************************************/
     case WINDOWS_TEST:    // 保留
-      ADC_Average(ADC_AveTr);
-
-      if(KEY_LP == 0) LCD_PutStr(Axis_KEY_X+8*0,  Axis_KEY_Y+16*0, (u8*)"KEY_LP", ASCII1608, GREEN, BLACK);
-      else            LCD_PutStr(Axis_KEY_X+8*0,  Axis_KEY_Y+16*0, (u8*)"KEY_LP", ASCII1608, WHITE, BLACK);
-      if(KEY_LR == 0) LCD_PutStr(Axis_KEY_X+8*0,  Axis_KEY_Y+16*1, (u8*)"KEY_LR", ASCII1608, GREEN, BLACK);
-      else            LCD_PutStr(Axis_KEY_X+8*0,  Axis_KEY_Y+16*1, (u8*)"KEY_LR", ASCII1608, WHITE, BLACK);
-      if(KEY_LL == 0) LCD_PutStr(Axis_KEY_X+8*0,  Axis_KEY_Y+16*2, (u8*)"KEY_LL", ASCII1608, GREEN, BLACK);
-      else            LCD_PutStr(Axis_KEY_X+8*0,  Axis_KEY_Y+16*2, (u8*)"KEY_LL", ASCII1608, WHITE, BLACK);
-
-      if(KEY_PP == 0) LCD_PutStr(Axis_KEY_X+8*8,  Axis_KEY_Y+16*0, (u8*)"KEY_PP", ASCII1608, GREEN, BLACK);
-      else            LCD_PutStr(Axis_KEY_X+8*8,  Axis_KEY_Y+16*0, (u8*)"KEY_PP", ASCII1608, WHITE, BLACK);
-      if(KEY_PR == 0) LCD_PutStr(Axis_KEY_X+8*8,  Axis_KEY_Y+16*1, (u8*)"KEY_PR", ASCII1608, GREEN, BLACK);
-      else            LCD_PutStr(Axis_KEY_X+8*8,  Axis_KEY_Y+16*1, (u8*)"KEY_PR", ASCII1608, WHITE, BLACK);
-      if(KEY_PL == 0) LCD_PutStr(Axis_KEY_X+8*8,  Axis_KEY_Y+16*2, (u8*)"KEY_PL", ASCII1608, GREEN, BLACK);
-      else            LCD_PutStr(Axis_KEY_X+8*8,  Axis_KEY_Y+16*2, (u8*)"KEY_PL", ASCII1608, WHITE, BLACK);
-
-      if(KEY_S1 == 1) LCD_PutStr(Axis_KEY_X+8*16, Axis_KEY_Y+16*0, (u8*)"KEY_S1", ASCII1608, GREEN, BLACK);
-      else            LCD_PutStr(Axis_KEY_X+8*16, Axis_KEY_Y+16*0, (u8*)"KEY_S1", ASCII1608, WHITE, BLACK);
-      if(KEY_S2 == 1) LCD_PutStr(Axis_KEY_X+8*16, Axis_KEY_Y+16*1, (u8*)"KEY_S2", ASCII1608, GREEN, BLACK);
-      else            LCD_PutStr(Axis_KEY_X+8*16, Axis_KEY_Y+16*1, (u8*)"KEY_S2", ASCII1608, WHITE, BLACK);
-      if(KEY_S3 == 1) LCD_PutStr(Axis_KEY_X+8*16, Axis_KEY_Y+16*2, (u8*)"KEY_S3", ASCII1608, GREEN, BLACK);
-      else            LCD_PutStr(Axis_KEY_X+8*16, Axis_KEY_Y+16*2, (u8*)"KEY_S3", ASCII1608, WHITE, BLACK);
-
-      if(KEY_RP == 0) LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*0, (u8*)"KEY_RP", ASCII1608, GREEN, BLACK);
-      else            LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*0, (u8*)"KEY_RP", ASCII1608, WHITE, BLACK);
-      if(KEY_RR == 0) LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*1, (u8*)"KEY_RR", ASCII1608, GREEN, BLACK);
-      else            LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*1, (u8*)"KEY_RR", ASCII1608, WHITE, BLACK);
-      if(KEY_RL == 0) LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*2, (u8*)"KEY_RL", ASCII1608, GREEN, BLACK);
-      else            LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*2, (u8*)"KEY_RL", ASCII1608, WHITE, BLACK);
-
-      LCD_PutNum(Axis_KEY_X+8*38, Axis_KEY_Y+16*0, Type_D, 5, Joystick_LX, WHITE, BLACK);
-      LCD_PutNum(Axis_KEY_X+8*38, Axis_KEY_Y+16*1, Type_D, 5, Joystick_LY, WHITE, BLACK);
-      LCD_PutNum(Axis_KEY_X+8*38, Axis_KEY_Y+16*2, Type_D, 5, Joystick_LZ, WHITE, BLACK);
-      LCD_PutNum(Axis_KEY_X+8*50, Axis_KEY_Y+16*0, Type_D, 5, Joystick_RX, WHITE, BLACK);
-      LCD_PutNum(Axis_KEY_X+8*50, Axis_KEY_Y+16*1, Type_D, 5, Joystick_RY, WHITE, BLACK);
-      LCD_PutNum(Axis_KEY_X+8*50, Axis_KEY_Y+16*2, Type_D, 5, Joystick_RZ, WHITE, BLACK);
-
-      MoveCirL(Axis_CIR_X+(Joystick_LX*0.0244140625f-50),       (Axis_CIR_Y-100)+(50-Joystick_LY*0.0244140625f), 25, GREEN, BLACK);
-      MoveCirR((Axis_CIR_X+240)+(Joystick_RX*0.0244140625f-50), (Axis_CIR_Y-100)+(50-Joystick_RY*0.0244140625f), 25, GREEN, BLACK);
-
+      MenuTest_KeyBoard();
       break;
 
     /************************** FSM CONF **************************************/
@@ -373,6 +284,114 @@ static void MenuCtrl_Power( void )
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
+#define Info_X	15
+#define Info_Y	25
+static void MenuTrack_Info_Init( void )
+{
+  Windows_PutStr(Info_X+8*0,  Info_Y+16*0,  (u8*)"Packet  : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*0,  Info_Y+16*1,  (u8*)"T.Min   : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*0,  Info_Y+16*2,  (u8*)"T.Sec   : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*0,  Info_Y+16*3,  (u8*)"T.mSec  : ", ASCII1608, WHITE, BLACK);
+
+  Windows_PutStr(Info_X+8*0,  Info_Y+16*5,  (u8*)"PID.KP  : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*0,  Info_Y+16*6,  (u8*)"PID.KI  : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*0,  Info_Y+16*7,  (u8*)"PID.KD  : ", ASCII1608, WHITE, BLACK);
+
+  Windows_PutStr(Info_X+8*0,  Info_Y+16*9,  (u8*)"Thr.CH1 : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*0,  Info_Y+16*10, (u8*)"Thr.CH2 : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*0,  Info_Y+16*11, (u8*)"Thr.CH3 : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*0,  Info_Y+16*12, (u8*)"Thr.CH4 : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*0,  Info_Y+16*13, (u8*)"Thr.CH5 : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*0,  Info_Y+16*14, (u8*)"Thr.CH6 : ", ASCII1608, WHITE, BLACK);
+
+  Windows_PutStr(Info_X+8*18, Info_Y+16*0,  (u8*)"Bat.Vol : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*18, Info_Y+16*1,  (u8*)"Bat.Cur : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*18, Info_Y+16*2,  (u8*)"Bat.Cap : ", ASCII1608, WHITE, BLACK);
+
+  Windows_PutStr(Info_X+8*18, Info_Y+16*4,  (u8*)"Acc.X   : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*18, Info_Y+16*5,  (u8*)"Acc.Y   : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*18, Info_Y+16*6,  (u8*)"Acc.Z   : ", ASCII1608, WHITE, BLACK);
+
+  Windows_PutStr(Info_X+8*18, Info_Y+16*8,  (u8*)"Gyr.X   : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*18, Info_Y+16*9,  (u8*)"Gyr.Y   : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*18, Info_Y+16*10, (u8*)"Gyr.Z   : ", ASCII1608, WHITE, BLACK);
+
+  Windows_PutStr(Info_X+8*18, Info_Y+16*12, (u8*)"Mag.X   : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*18, Info_Y+16*13, (u8*)"Mag.Y   : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*18, Info_Y+16*14, (u8*)"Mag.Z   : ", ASCII1608, WHITE, BLACK);
+
+  Windows_PutStr(Info_X+8*36, Info_Y+16*0,  (u8*)"Ang.X  : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*36, Info_Y+16*1,  (u8*)"Ang.Y  : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*36, Info_Y+16*2,  (u8*)"Ang.Z  : ", ASCII1608, WHITE, BLACK);
+
+  Windows_PutStr(Info_X+8*36, Info_Y+16*4,  (u8*)"Vel.X  : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*36, Info_Y+16*5,  (u8*)"Vel.Y  : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*36, Info_Y+16*6,  (u8*)"Vel.Z  : ", ASCII1608, WHITE, BLACK);
+
+  Windows_PutStr(Info_X+8*36, Info_Y+16*8,  (u8*)"Pos.X  : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*36, Info_Y+16*9,  (u8*)"Pos.Y  : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*36, Info_Y+16*10, (u8*)"Pos.Z  : ", ASCII1608, WHITE, BLACK);
+
+  Windows_PutStr(Info_X+8*36, Info_Y+16*12, (u8*)"Baro.T : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*36, Info_Y+16*13, (u8*)"Baro.P : ", ASCII1608, WHITE, BLACK);
+  Windows_PutStr(Info_X+8*36, Info_Y+16*14, (u8*)"Baro.H : ", ASCII1608, WHITE, BLACK);
+}
+static void MenuTrack_Info( void )
+{
+  Windows_PutNum(Info_X+8*10, Info_Y+16*0,  Type_I, 5, RF_RecvData.Packet,     WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*1,  Type_I, 5, RF_RecvData.Time.Min,   WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*2,  Type_I, 5, RF_RecvData.Time.Sec,   WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*3,  Type_I, 5, RF_RecvData.Time.mSec,  WHITE, BLACK);
+
+  Windows_PutNum(Info_X+8*10, Info_Y+16*5,  Type_I, 5, RF_RecvData.PID.KP,     WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*6,  Type_I, 5, RF_RecvData.PID.KI,     WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*7,  Type_I, 5, RF_RecvData.PID.KD,     WHITE, BLACK);
+
+  Windows_PutNum(Info_X+8*10, Info_Y+16*9,  Type_I, 5, RF_RecvData.Thr.CH1,    WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*10, Type_I, 5, RF_RecvData.Thr.CH2,    WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*11, Type_I, 5, RF_RecvData.Thr.CH3,    WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*12, Type_I, 5, RF_RecvData.Thr.CH4,    WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*13, Type_I, 5, RF_RecvData.Thr.CH5,    WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*14, Type_I, 5, RF_RecvData.Thr.CH6,    WHITE, BLACK);
+
+  Windows_PutNum(Info_X+8*28, Info_Y+16*0,  Type_I, 5, RF_RecvData.Batery.Vol, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*1,  Type_I, 5, RF_RecvData.Batery.Cur, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*2,  Type_I, 5, RF_RecvData.Batery.Cap, WHITE, BLACK);
+
+  Windows_PutNum(Info_X+8*28, Info_Y+16*4,  Type_I, 5, RF_RecvData.Acc.X,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*5,  Type_I, 5, RF_RecvData.Acc.Y,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*6,  Type_I, 5, RF_RecvData.Acc.Z,      WHITE, BLACK);
+
+  Windows_PutNum(Info_X+8*28, Info_Y+16*8,  Type_I, 5, RF_RecvData.Gyr.X,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*9,  Type_I, 5, RF_RecvData.Gyr.Y,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*10, Type_I, 5, RF_RecvData.Gyr.Z,      WHITE, BLACK);
+
+  Windows_PutNum(Info_X+8*28, Info_Y+16*12, Type_I, 5, RF_RecvData.Mag.X,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*13, Type_I, 5, RF_RecvData.Mag.Y,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*14, Type_I, 5, RF_RecvData.Mag.Z,      WHITE, BLACK);
+
+  Windows_PutNum(Info_X+8*45, Info_Y+16*0,  Type_I, 5, RF_RecvData.Ang.X,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*1,  Type_I, 5, RF_RecvData.Ang.Y,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*2,  Type_I, 5, RF_RecvData.Ang.Z,      WHITE, BLACK);
+
+  Windows_PutNum(Info_X+8*45, Info_Y+16*4,  Type_I, 5, RF_RecvData.Vel.X,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*5,  Type_I, 5, RF_RecvData.Vel.Y,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*6,  Type_I, 5, RF_RecvData.Vel.Z,      WHITE, BLACK);
+
+  Windows_PutNum(Info_X+8*45, Info_Y+16*8,  Type_I, 5, RF_RecvData.Pos.X,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*9,  Type_I, 5, RF_RecvData.Pos.Y,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*10, Type_I, 5, RF_RecvData.Pos.Z,      WHITE, BLACK);
+
+  Windows_PutNum(Info_X+8*45, Info_Y+16*12, Type_I, 5, RF_RecvData.Baro.Temp,   WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*13, Type_I, 9, RF_RecvData.Baro.Press,  WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*14, Type_I, 9, RF_RecvData.Baro.Height, WHITE, BLACK);
+
+//RF_RecvData.GPS.Lon     = (u32)Byte32(0, RecvBuf[22], RecvBuf[23], RecvBuf[24]);
+//RF_RecvData.GPS.Lat     = (u32)Byte32(0, RecvBuf[25], RecvBuf[26], RecvBuf[27]);
+
+}
+/*=====================================================================================================*/
+/*=====================================================================================================*/
 /* 示波器 WaveForm */
 #define WaveFromNum_X 409
 #define WaveFromNum_Y 10
@@ -445,6 +464,103 @@ static void MenuWave_WaveFrom( WAVEFORM_SEL WaveForm_Sel )
   Windows_PutNum(WaveFromNum_X+12, WaveFromNum_Y+8*29, Type_D, 5, WaveForm.Scale[0], WHITE,  BLACK);
 
   WaveFormPrint(&WaveForm);
+}
+/*=====================================================================================================*/
+/*=====================================================================================================*/
+/* 鍵盤測試 Test KeyBoard*/
+void MoveCirR( u16 CoordiX, u16 CoordiY, u16 Radius, u16 LineColor, u16 BackColor )
+{
+  static u32 clearColor = 0;
+  static u16 tmpRadius = 0;
+  static u16 tmpCoordiX = 0, tmpCoordiY = 0;
+
+  LCD_DrawCircle(tmpCoordiX, tmpCoordiY, tmpRadius, clearColor);
+  LCD_DrawCircle(tmpCoordiX, tmpCoordiY, tmpRadius, clearColor);
+
+  tmpRadius = Radius;
+  clearColor = BackColor;
+  tmpCoordiX = CoordiX;
+  tmpCoordiY = CoordiY;
+
+  LCD_DrawCircle(CoordiX, CoordiY, Radius, LineColor);
+  LCD_DrawCircle(CoordiX, CoordiY, Radius, LineColor);
+}
+void MoveCirL( u16 CoordiX, u16 CoordiY, u16 Radius, u16 LineColor, u16 BackColor )
+{
+  static u32 clearColor = 0;
+  static u16 tmpRadius = 0;
+  static u16 tmpCoordiX = 0, tmpCoordiY = 0;
+
+  LCD_DrawCircle(tmpCoordiX, tmpCoordiY, tmpRadius, clearColor);
+  LCD_DrawCircle(tmpCoordiX, tmpCoordiY, tmpRadius, clearColor);
+
+  tmpRadius = Radius;
+  clearColor = BackColor;
+  tmpCoordiX = CoordiX;
+  tmpCoordiY = CoordiY;
+
+  LCD_DrawCircle(CoordiX, CoordiY, Radius, LineColor);
+  LCD_DrawCircle(CoordiX, CoordiY, Radius, LineColor);
+}
+static void MenuTest_KeyBoard_Init( void )
+{
+  #define Axis_CIR_X 118
+  #define Axis_CIR_Y 220
+  LCD_DrawCircle(Axis_CIR_X,     Axis_CIR_Y-100, 102, WHITE);
+  LCD_DrawCircle(Axis_CIR_X,     Axis_CIR_Y-100, 101, WHITE);
+  LCD_DrawCircle(Axis_CIR_X+240, Axis_CIR_Y-100, 102, WHITE);
+  LCD_DrawCircle(Axis_CIR_X+240, Axis_CIR_Y-100, 101, WHITE);
+
+  #define Axis_KEY_X 20
+  #define Axis_KEY_Y 240
+  LCD_PutStr(Axis_KEY_X+8*35, Axis_KEY_Y+16*0, (u8*)"LX:", ASCII1608, WHITE, BLACK);
+  LCD_PutStr(Axis_KEY_X+8*35, Axis_KEY_Y+16*1, (u8*)"LY:", ASCII1608, WHITE, BLACK);
+  LCD_PutStr(Axis_KEY_X+8*35, Axis_KEY_Y+16*2, (u8*)"LZ:", ASCII1608, WHITE, BLACK);
+  LCD_PutStr(Axis_KEY_X+8*47, Axis_KEY_Y+16*0, (u8*)"RX:", ASCII1608, WHITE, BLACK);
+  LCD_PutStr(Axis_KEY_X+8*47, Axis_KEY_Y+16*1, (u8*)"RY:", ASCII1608, WHITE, BLACK);
+  LCD_PutStr(Axis_KEY_X+8*47, Axis_KEY_Y+16*2, (u8*)"RZ:", ASCII1608, WHITE, BLACK);
+}
+static void MenuTest_KeyBoard( void )
+{
+  KeyBoard_ReadADC();
+
+  if(KEY_LP == KEY_ON)  LCD_PutStr(Axis_KEY_X+8*0,  Axis_KEY_Y+16*0, (u8*)"KEY_LP", ASCII1608, GREEN, BLACK);
+  else                  LCD_PutStr(Axis_KEY_X+8*0,  Axis_KEY_Y+16*0, (u8*)"KEY_LP", ASCII1608, WHITE, BLACK);
+  if(KEY_LR == KEY_ON)  LCD_PutStr(Axis_KEY_X+8*0,  Axis_KEY_Y+16*1, (u8*)"KEY_LR", ASCII1608, GREEN, BLACK);
+  else                  LCD_PutStr(Axis_KEY_X+8*0,  Axis_KEY_Y+16*1, (u8*)"KEY_LR", ASCII1608, WHITE, BLACK);
+  if(KEY_LL == KEY_ON)  LCD_PutStr(Axis_KEY_X+8*0,  Axis_KEY_Y+16*2, (u8*)"KEY_LL", ASCII1608, GREEN, BLACK);
+  else                  LCD_PutStr(Axis_KEY_X+8*0,  Axis_KEY_Y+16*2, (u8*)"KEY_LL", ASCII1608, WHITE, BLACK);
+
+  if(KEY_PP == KEY_ON)  LCD_PutStr(Axis_KEY_X+8*8,  Axis_KEY_Y+16*0, (u8*)"KEY_PP", ASCII1608, GREEN, BLACK);
+  else                  LCD_PutStr(Axis_KEY_X+8*8,  Axis_KEY_Y+16*0, (u8*)"KEY_PP", ASCII1608, WHITE, BLACK);
+  if(KEY_PR == KEY_ON)  LCD_PutStr(Axis_KEY_X+8*8,  Axis_KEY_Y+16*1, (u8*)"KEY_PR", ASCII1608, GREEN, BLACK);
+  else                  LCD_PutStr(Axis_KEY_X+8*8,  Axis_KEY_Y+16*1, (u8*)"KEY_PR", ASCII1608, WHITE, BLACK);
+  if(KEY_PL == KEY_ON)  LCD_PutStr(Axis_KEY_X+8*8,  Axis_KEY_Y+16*2, (u8*)"KEY_PL", ASCII1608, GREEN, BLACK);
+  else                  LCD_PutStr(Axis_KEY_X+8*8,  Axis_KEY_Y+16*2, (u8*)"KEY_PL", ASCII1608, WHITE, BLACK);
+
+  if(KEY_S1 == KEY_ON)  LCD_PutStr(Axis_KEY_X+8*16, Axis_KEY_Y+16*0, (u8*)"KEY_S1", ASCII1608, GREEN, BLACK);
+  else                  LCD_PutStr(Axis_KEY_X+8*16, Axis_KEY_Y+16*0, (u8*)"KEY_S1", ASCII1608, WHITE, BLACK);
+  if(KEY_S2 == KEY_ON)  LCD_PutStr(Axis_KEY_X+8*16, Axis_KEY_Y+16*1, (u8*)"KEY_S2", ASCII1608, GREEN, BLACK);
+  else                  LCD_PutStr(Axis_KEY_X+8*16, Axis_KEY_Y+16*1, (u8*)"KEY_S2", ASCII1608, WHITE, BLACK);
+  if(KEY_S3 == KEY_ON)  LCD_PutStr(Axis_KEY_X+8*16, Axis_KEY_Y+16*2, (u8*)"KEY_S3", ASCII1608, GREEN, BLACK);
+  else                  LCD_PutStr(Axis_KEY_X+8*16, Axis_KEY_Y+16*2, (u8*)"KEY_S3", ASCII1608, WHITE, BLACK);
+
+  if(KEY_RP == KEY_ON)  LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*0, (u8*)"KEY_RP", ASCII1608, GREEN, BLACK);
+  else                  LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*0, (u8*)"KEY_RP", ASCII1608, WHITE, BLACK);
+  if(KEY_RR == KEY_ON)  LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*1, (u8*)"KEY_RR", ASCII1608, GREEN, BLACK);
+  else                  LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*1, (u8*)"KEY_RR", ASCII1608, WHITE, BLACK);
+  if(KEY_RL == KEY_ON)  LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*2, (u8*)"KEY_RL", ASCII1608, GREEN, BLACK);
+  else                  LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*2, (u8*)"KEY_RL", ASCII1608, WHITE, BLACK);
+
+  LCD_PutNum(Axis_KEY_X+8*38, Axis_KEY_Y+16*0, Type_D, 5, JS_LX, WHITE, BLACK);
+  LCD_PutNum(Axis_KEY_X+8*38, Axis_KEY_Y+16*1, Type_D, 5, JS_LY, WHITE, BLACK);
+  LCD_PutNum(Axis_KEY_X+8*38, Axis_KEY_Y+16*2, Type_D, 5, JS_LZ, WHITE, BLACK);
+  LCD_PutNum(Axis_KEY_X+8*50, Axis_KEY_Y+16*0, Type_D, 5, JS_RX, WHITE, BLACK);
+  LCD_PutNum(Axis_KEY_X+8*50, Axis_KEY_Y+16*1, Type_D, 5, JS_RY, WHITE, BLACK);
+  LCD_PutNum(Axis_KEY_X+8*50, Axis_KEY_Y+16*2, Type_D, 5, JS_RZ, WHITE, BLACK);
+
+  MoveCirL(Axis_CIR_X+(JS_LX*0.0244140625f-50),       (Axis_CIR_Y-100)+(50-JS_LY*0.0244140625f), 25, GREEN, BLACK);
+  MoveCirR((Axis_CIR_X+240)+(JS_RX*0.0244140625f-50), (Axis_CIR_Y-100)+(50-JS_RY*0.0244140625f), 25, GREEN, BLACK);
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/

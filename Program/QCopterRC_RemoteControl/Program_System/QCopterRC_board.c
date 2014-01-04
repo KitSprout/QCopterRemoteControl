@@ -5,7 +5,7 @@
 #include "QCopterRC_board.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-KEYBOARD_ST KeyBD;
+KeyBoard_TypeDef KeyBD;
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : LED_Config
@@ -61,26 +61,26 @@ void KEY_Config( void )
                          RCC_AHB1Periph_GPIOD | RCC_AHB1Periph_GPIOE, ENABLE);
 
   /* KEY_LL PA0 */  /* KEY_LP PA1 */  /* KEY_RP PA8 */
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_8;
+  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_8;
   GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
   GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* KEY_LR PB2 */
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_2;
+  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_2;
   GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
   GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* KEY_RL PD3 */  /* KEY_RR PD6 */
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_6;
+  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_6;
   GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
   GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /* KEY_PR PE0 */  /* KEY_PP PE1 */  /* KEY_PL PE2 */
   /* KEY_S1 PE3 */  /* KEY_S2 PE4 */  /* KEY_S3 PE5 */
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 |
+  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 |
                              GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5;
   GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
   GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
@@ -88,27 +88,49 @@ void KEY_Config( void )
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*
-**函數 : KeyBoard_Read
-**功能 : 輸入按鍵讀取
+**函數 : KeyBoard_ReadKEY
+**功能 : 按鍵讀取
 **輸入 : None
 **輸出 : None
-**使用 : KeyBoard_Read();
+**使用 : KeyBoard_ReadKEY();
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void KeyBoard_Read( void )
+void KeyBoard_ReadKEY( void )
 {
-//  KEY_RP = !DEF_KEY_RP;
-//  KEY_RR = !DEF_KEY_RR;
-//  KEY_RL = !DEF_KEY_RL;
-//  KEY_LP = !DEF_KEY_LP;
-//  KEY_LR = !DEF_KEY_LR;
-//  KEY_LL = !DEF_KEY_LL;
-//  KEY_PP = !DEF_KEY_PP;
-//  KEY_PR = !DEF_KEY_PR;
-//  KEY_PL = !DEF_KEY_PL;
-//  KEY_S1 =  DEF_KEY_S1;
-//  KEY_S2 =  DEF_KEY_S2;
-//  KEY_S3 =  DEF_KEY_S3;
+  KEY_RP = !DEF_KEY_RP;
+  KEY_RR = !DEF_KEY_RR;
+  KEY_RL = !DEF_KEY_RL;
+  KEY_LP = !DEF_KEY_LP;
+  KEY_LR = !DEF_KEY_LR;
+  KEY_LL = !DEF_KEY_LL;
+  KEY_PP = !DEF_KEY_PP;
+  KEY_PR = !DEF_KEY_PR;
+  KEY_PL = !DEF_KEY_PL;
+  KEY_S1 =  DEF_KEY_S1;
+  KEY_S2 =  DEF_KEY_S2;
+  KEY_S3 =  DEF_KEY_S3;
+}
+/*=====================================================================================================*/
+/*=====================================================================================================*
+**函數 : KeyBoard_ReadADC
+**功能 : 可變電阻讀取
+**輸入 : None
+**輸出 : None
+**使用 : KeyBoard_ReadADC();
+**=====================================================================================================*/
+/*=====================================================================================================*/
+void KeyBoard_ReadADC( void )
+{
+  u16 ADC_AveTr[6] = {0};
+
+  ADC_Average(ADC_AveTr);
+
+  JS_RX = ADC_AveTr[0];
+  JS_RY = ADC_AveTr[1];
+  JS_RZ = ADC_AveTr[4];
+  JS_LX = ADC_AveTr[2];
+  JS_LY = ADC_AveTr[3];
+  JS_LZ = ADC_AveTr[5];
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
