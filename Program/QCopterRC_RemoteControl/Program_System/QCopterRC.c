@@ -11,6 +11,10 @@
 #include "module_nrf24l01.h"
 #include "module_r61581.h"
 #include "algorithm_string.h"
+#include "algorithm_bitmap.h"
+
+//#include "ff.h"
+//#include "diskio.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 FSM_MODE FSM_State = FSM_TX;
@@ -36,7 +40,7 @@ void System_Init( void )
   R61581_Init();
   UserInterface_Init();
 
-//  #define Axis_X 60
+//  #define Axis_X 30
 //  #define Axis_Y 96
 //  LCD_PutStr(Axis_X, Axis_Y+16*0, (u8*)" SD Init ... ", ASCII1608, WHITE, BLACK);
 //  while(SD_Init() != SD_OK) {
@@ -50,16 +54,16 @@ void System_Init( void )
 
 //  LCD_PutStr(Axis_X,      Axis_Y+16*2, (u8*)"---- SD Init Info -----", ASCII1608, WHITE, BLACK);
 //  LCD_PutStr(Axis_X,      Axis_Y+16*3, (u8*)" Capacity : ", ASCII1608, WHITE, BLACK);
-//  LCD_PutNum(Axis_X+8*12, Axis_Y+16*3, Type_D, 5, SDCardInfo.CardCapacity>>20, WHITE, BLACK);
+//  LCD_PutNum(Axis_X+8*12, Axis_Y+16*3, Type_D, 5, SDCardInfo.CardCapacity>>20, ASCII1608, WHITE, BLACK);
 //  LCD_PutStr(Axis_X+8*17, Axis_Y+16*3, (u8*)" MB", ASCII1608, WHITE, BLACK);
 //  LCD_PutStr(Axis_X,      Axis_Y+16*4, (u8*)" CardBlockSize : ", ASCII1608, WHITE, BLACK);
-//  LCD_PutNum(Axis_X+8*17, Axis_Y+16*4, Type_D, 5, SDCardInfo.CardBlockSize, WHITE, BLACK);
+//  LCD_PutNum(Axis_X+8*17, Axis_Y+16*4, Type_D, 5, SDCardInfo.CardBlockSize, ASCII1608, WHITE, BLACK);
 //  LCD_PutStr(Axis_X+8*22, Axis_Y+16*4, (u8*)" ", ASCII1608, WHITE, BLACK);
 //  LCD_PutStr(Axis_X,      Axis_Y+16*5, (u8*)" CardType : ", ASCII1608, WHITE, BLACK);
-//  LCD_PutNum(Axis_X+8*12, Axis_Y+16*5, Type_D, 5, SDCardInfo.CardType, WHITE, BLACK);
+//  LCD_PutNum(Axis_X+8*12, Axis_Y+16*5, Type_D, 5, SDCardInfo.CardType, ASCII1608, WHITE, BLACK);
 //  LCD_PutStr(Axis_X+8*17, Axis_Y+16*5, (u8*)" ", ASCII1608, WHITE, BLACK);
 //  LCD_PutStr(Axis_X,      Axis_Y+16*6, (u8*)" RCA : ", ASCII1608, WHITE, BLACK);
-//  LCD_PutNum(Axis_X+8*7,  Axis_Y+16*6, Type_D, 5, SDCardInfo.RCA, WHITE, BLACK);
+//  LCD_PutNum(Axis_X+8*7,  Axis_Y+16*6, Type_D, 5, SDCardInfo.RCA, ASCII1608, WHITE, BLACK);
 //  LCD_PutStr(Axis_X+8*12, Axis_Y+16*6, (u8*)" ", ASCII1608, WHITE, BLACK);
 //  LCD_PutStr(Axis_X,      Axis_Y+16*7, (u8*)"-----------------------", ASCII1608, WHITE, BLACK);
 

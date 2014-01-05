@@ -593,6 +593,11 @@
               <FileType>1</FileType>
               <FilePath>..\Program_Algorithm\algorithm_string.c</FilePath>
             </File>
+            <File>
+              <FileName>algorithm_bitmap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Program_Algorithm\algorithm_bitmap.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

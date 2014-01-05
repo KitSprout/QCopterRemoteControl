@@ -166,7 +166,8 @@ static void MenuCtrl_Throttle( void )
 	TempThr_H = (u16)(TempThr/10);
 	TempThr_L = (u16)(TempThr%10);
 
-Delay_1ms(5);
+Delay_1ms(10);
+
   if(TempThr < 1000 || TempThr >0) {
     Windows_PutNum(Throttle_X0,    Throttle_Y0+252, Type_D, 2, TempThr_H, ASCII1608, WHITE, BLACK);
     Windows_PutNum(Throttle_X0+24, Throttle_Y0+252, Type_D, 1, TempThr_L, ASCII1608, WHITE, BLACK);
@@ -178,7 +179,7 @@ Delay_1ms(5);
 
   TempThr_H = (u16)(RF_RecvData.Thr.CH1/200);
 	for(i=0; i<50; i++) {
-		if((i%4)==0) {
+		if((i%5)==0) {
 			if(i<=TempThr_H && i>40)
 				Windows_DrawRectangleFill(Throttle_X0, Throttle_Y0+247-i*5, 32, 3, RED);
 			else if(i<=(TempThr_H))
