@@ -55,8 +55,8 @@ void UserInterface_Init( void );
 void UserInterface_Update( WINDOWS_MENU MenuSel );
 void UserInterface_MoveSel( WINDOWS_MENU MenuSel );
 
-static void MenuCtrl_Motor_Init( void );
-//static void MenuCtrl_Motor( void );
+static void MenuCtrl_Throttle_Init( void );
+static void MenuCtrl_Throttle( void );
 static void MenuCtrl_Connection_Init( void );
 static void MenuCtrl_Connection( void );
 static void MenuCtrl_Mode_Init( void );
@@ -84,7 +84,7 @@ static void Windows_DrawRectangleFill( u16 CoordiX, u16 CoordiY, u16 Width, u16 
 static void Windows_DrawCircle( u16 CoordiX, u16 CoordiY, u16 Radius, u16 Color );
 static void Windows_DrawPicture( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, uc8 *Pic );
 static void Windows_PutStr( u16 CoordiX, u16 CoordiY, u8 *ChWord, u8 FontStyle, u16 FontColor, u16 BackColor );
-static void Windows_PutNum( u16 CoordiX, u16 CoordiY, u8 Type, u8 Length, u32 NumData, u16 FontColor, u16 BackColor );
+static void Windows_PutNum( u16 CoordiX, u16 CoordiY, u8 Type, u8 Length, u32 NumData, u8 FontStyle, u16 FontColor, u16 BackColor );
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 #endif

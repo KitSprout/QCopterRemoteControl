@@ -24,8 +24,8 @@ void Str_NumToChar( u8 Type, u8 NumLen, u8 *CharData, s32 NumData )
     case Type_D:
     case Type_H:
       for(i=0; i<NumLen; i++) {
-        Tmp[i] = ((u32)NumData) / NumTmp;
-        NumTmp = NumTmp * Type;
+        Tmp[i] = (u32)(((u32)NumData) / NumTmp);
+        NumTmp = NumTmp*Type;
       }
       for(i=0; i<NumLen; i++) {
         CharData[NumLen-i-1] = Tmp[i] - Tmp[i+1]*Type;

@@ -640,9 +640,9 @@ void LCD_PutChar1608_( u16 CoordiX, u16 CoordiY, u8* ChWord, u16 FontColor, u16 
 /*=====================================================================================================*
 **函數 : LCD_PutStr
 **功能 : Put String
-**輸入 : CoordiX, CoordiY, ChWord, FontStyle, FontColor, BackColor
+**輸入 : CoordiX, CoordiY, ChWord, Font
 **輸出 : None
-**使用 : LCD_PutStr(10, 10, (u8*)"TFT LCD TEST ... ", ASCII1608, WHITE, BLACK);
+**使用 : LCD_PutStr(10, 10, (u8*)"TFT LCD TEST ... ", FontSyle, FontColor, BackColor);
 **=====================================================================================================*/
 /*=====================================================================================================*/
 void LCD_PutStr( u16 CoordiX, u16 CoordiY, u8 *ChWord, u8 FontStyle, u16 FontColor, u16 BackColor )
@@ -679,15 +679,15 @@ void LCD_PutStr( u16 CoordiX, u16 CoordiY, u8 *ChWord, u8 FontStyle, u16 FontCol
 **功能 : Put Number
 **輸入 : oordiX, CoordiY, Type, Length, NumData, FontColor, BackColor
 **輸出 : None
-**使用 : LCD_PutNum(CoordiX, CoordiY, Type_D, Length, NumData, WHITE, BLACK)
+**使用 : LCD_PutNum(CoordiX, CoordiY, Type_D, Length, NumData, u8 FontStyle, u16 FontColor, u16 BackColor);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void LCD_PutNum( u16 CoordiX, u16 CoordiY, u8 Type, u8 Length, u32 NumData, u16 FontColor, u16 BackColor )
+void LCD_PutNum( u16 CoordiX, u16 CoordiY, u8 Type, u8 Length, u32 NumData, u8 FontStyle, u16 FontColor, u16 BackColor )
 {
 	u8 TmpNumber[16] = {0};
 
 	Str_NumToChar(Type, Length, TmpNumber, NumData);
-	LCD_PutStr(CoordiX, CoordiY, TmpNumber, ASCII1608, FontColor, BackColor);
+	LCD_PutStr(CoordiX, CoordiY, TmpNumber, FontStyle, FontColor, BackColor);
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*

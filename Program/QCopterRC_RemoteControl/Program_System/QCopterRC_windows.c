@@ -27,7 +27,7 @@ void UserInterface_MoveSel( WINDOWS_MENU MenuSel )
     case WINDOWS_CTRL:
       Windows_Clear(BLACK);
       Windows_SelMenu(Windows_SelMenu_1, WHITE, BLACK);
-      MenuCtrl_Motor_Init();
+      MenuCtrl_Throttle_Init();
       MenuCtrl_Connection_Init();
       MenuCtrl_Mode_Init();
       MenuCtrl_WorkTime_Init();
@@ -69,6 +69,8 @@ void UserInterface_MoveSel( WINDOWS_MENU MenuSel )
 /*=====================================================================================================*/
 void UserInterface_Update( WINDOWS_MENU MenuSel )
 {
+  u16 tempReadADC = 0;
+
   static WAVEFORM_SEL WaveForm_Sel = WAVEFORM_TEST;
 
   switch(MenuSel) {
@@ -76,6 +78,7 @@ void UserInterface_Update( WINDOWS_MENU MenuSel )
     /************************** FSM CTRL **************************************/
     case WINDOWS_CTRL:    // 主控介面
       MenuCtrl_Power();
+      MenuCtrl_Throttle();
 //      MenuCtrl_WorkTime();
       MenuCtrl_Connection();
       break;
@@ -100,16 +103,18 @@ void UserInterface_Update( WINDOWS_MENU MenuSel )
           WaveForm_Sel = (WAVEFORM_SEL)(WAVEFORM_OUT_R-1);
         Delay_1ms(DeBounce);
       }
-//      if(KEYR_L == 0) {
-//        Tmp_ADCL_Z = (ADC_AveTr[5]-70)/8+0.5;
-//        if(Tmp_ADCL_Z>500)
-//          Tmp_ADCL_Z = 500;
-//        if(Tmp_ADCL_Z<1)
-//          Tmp_ADCL_Z = 1;
-//        WaveForm.Scale[0] = Tmp_ADCL_Z;
-//        WaveForm.Scale[1] = Tmp_ADCL_Z;
-//        WaveForm.Scale[2] = Tmp_ADCL_Z;
-//      }
+      if(KEY_RR == KEY_ON) {
+        KeyBoard_ReadADC();
+        tempReadADC = (u16)(JS_LZ>>4);
+        if(tempReadADC>256)
+          tempReadADC = 500;
+        if(tempReadADC<1)
+          tempReadADC = 1;
+        WaveForm.Scale[0] = tempReadADC;
+        WaveForm.Scale[1] = tempReadADC;
+        WaveForm.Scale[2] = tempReadADC;
+        WaveForm.Scale[3] = tempReadADC;
+      }
       MenuWave_WaveFrom(WaveForm_Sel);
       break;
 
@@ -143,58 +148,61 @@ void UserInterface_Update( WINDOWS_MENU MenuSel )
 /*=====================================================================================================*/
 /* 馬達 Motor */
 // MAX_LW = {40,221}
-#define Motor_X0	434
-#define Motor_Y0	25
-static void MenuCtrl_Motor_Init( void )
+//#define Motor_X0	434
+#define Throttle_X0	435
+#define Throttle_Y0	25
+static void MenuCtrl_Throttle_Init( void )
 {
-	Windows_PutStr(Motor_X0+16, Motor_Y0+205, (u8*)".", ASCII1608, WHITE, BLACK);
-	Windows_PutStr(Motor_X0+32, Motor_Y0+205, (u8*)"%", ASCII1608, WHITE, BLACK);
+	Windows_PutStr(Throttle_X0+16, Throttle_Y0+252, (u8*)".", ASCII1608, WHITE, BLACK);
+	Windows_PutStr(Throttle_X0+32, Throttle_Y0+252, (u8*)"%", ASCII1608, WHITE, BLACK);
 }
-//static void MenuCtrl_Motor( void )
-//{
-//	u8 i = 0;
-//	u16 Tmp_ADC = 0;
+static void MenuCtrl_Throttle( void )
+{
+  u8 i = 0;
+	u16 TempThr = 0;
+  u16 TempThr_H = 0, TempThr_L = 0;
 
-//	Tmp_ADC = (u16)((double)(ADC_AveTr[2]-70)/39.5f+0.5f);
-//	Tmp_Motor_PWM = (u16)((double)(PWM_Motor-800)/1.2f+0.5f);
-//	Data_PL = (u16)(Tmp_Motor_PWM/10);
-//	Data_PR = (u16)(Tmp_Motor_PWM%10);
+  TempThr   = (u16)(RF_SendData.Ctrl.ThrB/10.0f);
+	TempThr_H = (u16)(TempThr/10);
+	TempThr_L = (u16)(TempThr%10);
 
-//	if(Data_PL >= 100) {
-//		NumToChar(Type_D, 2, PrintTr[4], 99);
-//		NumToChar(Type_D, 1, PrintTr[5], 9);
-//	}
-//	else {
-//		NumToChar(Type_D, 2, PrintTr[4], Data_PL);
-//		NumToChar(Type_D, 1, PrintTr[5], Data_PR);
-//	}
-//	Windows_PutStr(Motor_X0, Motor_Y0+205, PrintTr[4], ASCII1608, WHITE, BLACK);
-//	Windows_PutStr(Motor_X0+24, Motor_Y0+205, PrintTr[5], ASCII1608, WHITE, BLACK);
-//	for(i=0; i<41; i++) {
-//		if((i%4)==0) {
-//			if(i<=(Data_PL*2/5) && i>27)
-//				Windows_DrawRectangleFill(Motor_X0, Motor_Y0+5*(40-i), 32, 3, 0x470000);
-//			else if(i<=(Data_PL*2/5))
-//				Windows_DrawRectangleFill(Motor_X0, Motor_Y0+5*(40-i), 32, 3, GREEN);
-//			else
-//				Windows_DrawRectangleFill(Motor_X0, Motor_Y0+5*(40-i), 32, 3, 0x050505);
-//		}
-//		else {
-//			if(i<=(Data_PL*2/5) && i>27)
-//				Windows_DrawRectangleFill(Motor_X0+12, Motor_Y0+5*(40-i), 20, 3, 0x470000);
-//			else if(i<=(Data_PL*2/5))
-//				Windows_DrawRectangleFill(Motor_X0+12, Motor_Y0+5*(40-i), 20, 3, GREEN);
-//			else
-//				Windows_DrawRectangleFill(Motor_X0+12, Motor_Y0+5*(40-i), 20, 3, 0x050505);
-//		}
-//	}
-//	for(i=0; i<41; i++) {
-//		if(i<=(Tmp_ADC*2/5))
-//			Windows_DrawRectangleFill(475, 25+5*(40-i), 3, 3, RED);
-//		else
-//			Windows_DrawRectangleFill(475, 25+5*(40-i), 3, 3, 0x400000);
-//	}
-//}
+Delay_1ms(5);
+  if(TempThr < 1000 || TempThr >0) {
+    Windows_PutNum(Throttle_X0,    Throttle_Y0+252, Type_D, 2, TempThr_H, ASCII1608, WHITE, BLACK);
+    Windows_PutNum(Throttle_X0+24, Throttle_Y0+252, Type_D, 1, TempThr_L, ASCII1608, WHITE, BLACK);
+  }
+	else if(TempThr >= 1000)
+    Windows_PutStr(Throttle_X0, Throttle_Y0+252, (u8*)"99.9%", ASCII1608, WHITE, BLACK);
+	else
+    Windows_PutStr(Throttle_X0, Throttle_Y0+252, (u8*)"00.0%", ASCII1608, WHITE, BLACK);
+
+  TempThr_H = (u16)(RF_RecvData.Thr.CH1/200);
+	for(i=0; i<50; i++) {
+		if((i%4)==0) {
+			if(i<=TempThr_H && i>40)
+				Windows_DrawRectangleFill(Throttle_X0, Throttle_Y0+247-i*5, 32, 3, RED);
+			else if(i<=(TempThr_H))
+				Windows_DrawRectangleFill(Throttle_X0, Throttle_Y0+247-i*5, 32, 3, GREEN);
+			else
+				Windows_DrawRectangleFill(Throttle_X0, Throttle_Y0+247-i*5, 32, 3, 0x9000);
+		}
+		else {
+			if(i<=TempThr_H && i>40)
+				Windows_DrawRectangleFill(Throttle_X0+12, Throttle_Y0+247-i*5, 20, 3, RED);
+			else if(i<=(TempThr_H))
+				Windows_DrawRectangleFill(Throttle_X0+12, Throttle_Y0+247-i*5, 20, 3, GREEN);
+			else
+				Windows_DrawRectangleFill(Throttle_X0+12, Throttle_Y0+247-i*5, 20, 3, 0x9000);
+		}
+	}
+
+	for(i=0; i<50; i++) {
+		if(i<=(TempThr/20))
+			Windows_DrawRectangleFill(Throttle_X0+35, Throttle_Y0+247-i*5, 3, 3, RED);
+		else
+			Windows_DrawRectangleFill(Throttle_X0+35, Throttle_Y0+247-i*5, 3, 3, 0x9000);
+	}
+}
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 /* 連線狀況 Connection */
@@ -268,7 +276,7 @@ static void MenuCtrl_WorkTime_Init( void )
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 /* 電池電量 BatteryPower */
-#define Power_X0	440
+#define Power_X0	439
 #define Power_Y0	2
 static void MenuCtrl_Power_Init( void )
 {
@@ -338,57 +346,56 @@ static void MenuTrack_Info_Init( void )
 }
 static void MenuTrack_Info( void )
 {
-  Windows_PutNum(Info_X+8*10, Info_Y+16*0,  Type_I, 5, RF_RecvData.Packet,     WHITE, BLACK);
-  Windows_PutNum(Info_X+8*10, Info_Y+16*1,  Type_I, 5, RF_RecvData.Time.Min,   WHITE, BLACK);
-  Windows_PutNum(Info_X+8*10, Info_Y+16*2,  Type_I, 5, RF_RecvData.Time.Sec,   WHITE, BLACK);
-  Windows_PutNum(Info_X+8*10, Info_Y+16*3,  Type_I, 5, RF_RecvData.Time.mSec,  WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*0,  Type_I, 5, RF_RecvData.Packet,      ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*1,  Type_I, 5, RF_RecvData.Time.Min,    ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*2,  Type_I, 5, RF_RecvData.Time.Sec,    ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*3,  Type_I, 5, RF_RecvData.Time.mSec,   ASCII1608, WHITE, BLACK);
 
-  Windows_PutNum(Info_X+8*10, Info_Y+16*5,  Type_I, 5, RF_RecvData.PID.KP,     WHITE, BLACK);
-  Windows_PutNum(Info_X+8*10, Info_Y+16*6,  Type_I, 5, RF_RecvData.PID.KI,     WHITE, BLACK);
-  Windows_PutNum(Info_X+8*10, Info_Y+16*7,  Type_I, 5, RF_RecvData.PID.KD,     WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*5,  Type_I, 5, RF_RecvData.PID.KP,      ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*6,  Type_I, 5, RF_RecvData.PID.KI,      ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*7,  Type_I, 5, RF_RecvData.PID.KD,      ASCII1608, WHITE, BLACK);
 
-  Windows_PutNum(Info_X+8*10, Info_Y+16*9,  Type_I, 5, RF_RecvData.Thr.CH1,    WHITE, BLACK);
-  Windows_PutNum(Info_X+8*10, Info_Y+16*10, Type_I, 5, RF_RecvData.Thr.CH2,    WHITE, BLACK);
-  Windows_PutNum(Info_X+8*10, Info_Y+16*11, Type_I, 5, RF_RecvData.Thr.CH3,    WHITE, BLACK);
-  Windows_PutNum(Info_X+8*10, Info_Y+16*12, Type_I, 5, RF_RecvData.Thr.CH4,    WHITE, BLACK);
-  Windows_PutNum(Info_X+8*10, Info_Y+16*13, Type_I, 5, RF_RecvData.Thr.CH5,    WHITE, BLACK);
-  Windows_PutNum(Info_X+8*10, Info_Y+16*14, Type_I, 5, RF_RecvData.Thr.CH6,    WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*9,  Type_I, 5, RF_RecvData.Thr.CH1,     ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*10, Type_I, 5, RF_RecvData.Thr.CH2,     ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*11, Type_I, 5, RF_RecvData.Thr.CH3,     ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*12, Type_I, 5, RF_RecvData.Thr.CH4,     ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*13, Type_I, 5, RF_RecvData.Thr.CH5,     ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*10, Info_Y+16*14, Type_I, 5, RF_RecvData.Thr.CH6,     ASCII1608, WHITE, BLACK);
 
-  Windows_PutNum(Info_X+8*28, Info_Y+16*0,  Type_I, 5, RF_RecvData.Batery.Vol, WHITE, BLACK);
-  Windows_PutNum(Info_X+8*28, Info_Y+16*1,  Type_I, 5, RF_RecvData.Batery.Cur, WHITE, BLACK);
-  Windows_PutNum(Info_X+8*28, Info_Y+16*2,  Type_I, 5, RF_RecvData.Batery.Cap, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*0,  Type_I, 5, RF_RecvData.Batery.Vol,  ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*1,  Type_I, 5, RF_RecvData.Batery.Cur,  ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*2,  Type_I, 5, RF_RecvData.Batery.Cap,  ASCII1608, WHITE, BLACK);
 
-  Windows_PutNum(Info_X+8*28, Info_Y+16*4,  Type_I, 5, RF_RecvData.Acc.X,      WHITE, BLACK);
-  Windows_PutNum(Info_X+8*28, Info_Y+16*5,  Type_I, 5, RF_RecvData.Acc.Y,      WHITE, BLACK);
-  Windows_PutNum(Info_X+8*28, Info_Y+16*6,  Type_I, 5, RF_RecvData.Acc.Z,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*4,  Type_I, 5, RF_RecvData.Acc.X,       ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*5,  Type_I, 5, RF_RecvData.Acc.Y,       ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*6,  Type_I, 5, RF_RecvData.Acc.Z,       ASCII1608, WHITE, BLACK);
 
-  Windows_PutNum(Info_X+8*28, Info_Y+16*8,  Type_I, 5, RF_RecvData.Gyr.X,      WHITE, BLACK);
-  Windows_PutNum(Info_X+8*28, Info_Y+16*9,  Type_I, 5, RF_RecvData.Gyr.Y,      WHITE, BLACK);
-  Windows_PutNum(Info_X+8*28, Info_Y+16*10, Type_I, 5, RF_RecvData.Gyr.Z,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*8,  Type_I, 5, RF_RecvData.Gyr.X,       ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*9,  Type_I, 5, RF_RecvData.Gyr.Y,       ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*10, Type_I, 5, RF_RecvData.Gyr.Z,       ASCII1608, WHITE, BLACK);
 
-  Windows_PutNum(Info_X+8*28, Info_Y+16*12, Type_I, 5, RF_RecvData.Mag.X,      WHITE, BLACK);
-  Windows_PutNum(Info_X+8*28, Info_Y+16*13, Type_I, 5, RF_RecvData.Mag.Y,      WHITE, BLACK);
-  Windows_PutNum(Info_X+8*28, Info_Y+16*14, Type_I, 5, RF_RecvData.Mag.Z,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*12, Type_I, 5, RF_RecvData.Mag.X,       ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*13, Type_I, 5, RF_RecvData.Mag.Y,       ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*28, Info_Y+16*14, Type_I, 5, RF_RecvData.Mag.Z,       ASCII1608, WHITE, BLACK);
 
-  Windows_PutNum(Info_X+8*45, Info_Y+16*0,  Type_I, 5, RF_RecvData.Ang.X,      WHITE, BLACK);
-  Windows_PutNum(Info_X+8*45, Info_Y+16*1,  Type_I, 5, RF_RecvData.Ang.Y,      WHITE, BLACK);
-  Windows_PutNum(Info_X+8*45, Info_Y+16*2,  Type_I, 5, RF_RecvData.Ang.Z,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*0,  Type_I, 5, RF_RecvData.Ang.X,       ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*1,  Type_I, 5, RF_RecvData.Ang.Y,       ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*2,  Type_I, 5, RF_RecvData.Ang.Z,       ASCII1608, WHITE, BLACK);
 
-  Windows_PutNum(Info_X+8*45, Info_Y+16*4,  Type_I, 5, RF_RecvData.Vel.X,      WHITE, BLACK);
-  Windows_PutNum(Info_X+8*45, Info_Y+16*5,  Type_I, 5, RF_RecvData.Vel.Y,      WHITE, BLACK);
-  Windows_PutNum(Info_X+8*45, Info_Y+16*6,  Type_I, 5, RF_RecvData.Vel.Z,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*4,  Type_I, 5, RF_RecvData.Vel.X,       ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*5,  Type_I, 5, RF_RecvData.Vel.Y,       ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*6,  Type_I, 5, RF_RecvData.Vel.Z,       ASCII1608, WHITE, BLACK);
 
-  Windows_PutNum(Info_X+8*45, Info_Y+16*8,  Type_I, 5, RF_RecvData.Pos.X,      WHITE, BLACK);
-  Windows_PutNum(Info_X+8*45, Info_Y+16*9,  Type_I, 5, RF_RecvData.Pos.Y,      WHITE, BLACK);
-  Windows_PutNum(Info_X+8*45, Info_Y+16*10, Type_I, 5, RF_RecvData.Pos.Z,      WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*8,  Type_I, 5, RF_RecvData.Pos.X,       ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*9,  Type_I, 5, RF_RecvData.Pos.Y,       ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*10, Type_I, 5, RF_RecvData.Pos.Z,       ASCII1608, WHITE, BLACK);
 
-  Windows_PutNum(Info_X+8*45, Info_Y+16*12, Type_I, 5, RF_RecvData.Baro.Temp,   WHITE, BLACK);
-  Windows_PutNum(Info_X+8*45, Info_Y+16*13, Type_I, 9, RF_RecvData.Baro.Press,  WHITE, BLACK);
-  Windows_PutNum(Info_X+8*45, Info_Y+16*14, Type_I, 9, RF_RecvData.Baro.Height, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*12, Type_I, 5, RF_RecvData.Baro.Temp,   ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*13, Type_I, 9, RF_RecvData.Baro.Press,  ASCII1608, WHITE, BLACK);
+  Windows_PutNum(Info_X+8*45, Info_Y+16*14, Type_I, 9, RF_RecvData.Baro.Height, ASCII1608, WHITE, BLACK);
 
 //RF_RecvData.GPS.Lon     = (u32)Byte32(0, RecvBuf[22], RecvBuf[23], RecvBuf[24]);
 //RF_RecvData.GPS.Lat     = (u32)Byte32(0, RecvBuf[25], RecvBuf[26], RecvBuf[27]);
-
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
@@ -457,11 +464,11 @@ static void MenuWave_WaveFrom( WAVEFORM_SEL WaveForm_Sel )
 
       break;
   }
-  Windows_PutNum(WaveFromNum_X+8,  WaveFromNum_Y+8*6,  Type_I, 5, WaveForm.Data[0],  RED,    BLACK);
-  Windows_PutNum(WaveFromNum_X+8,  WaveFromNum_Y+8*11, Type_I, 5, WaveForm.Data[1],  GREEN,  BLACK);
-  Windows_PutNum(WaveFromNum_X+8,  WaveFromNum_Y+8*16, Type_I, 5, WaveForm.Data[2],  BLUE,   BLACK);
-  Windows_PutNum(WaveFromNum_X+8,  WaveFromNum_Y+8*21, Type_I, 5, WaveForm.Data[3],  YELLOW, BLACK);
-  Windows_PutNum(WaveFromNum_X+12, WaveFromNum_Y+8*29, Type_D, 5, WaveForm.Scale[0], WHITE,  BLACK);
+  Windows_PutNum(WaveFromNum_X+8,  WaveFromNum_Y+8*6,  Type_I, 5, WaveForm.Data[0],  ASCII1608, RED,    BLACK);
+  Windows_PutNum(WaveFromNum_X+8,  WaveFromNum_Y+8*11, Type_I, 5, WaveForm.Data[1],  ASCII1608, GREEN,  BLACK);
+  Windows_PutNum(WaveFromNum_X+8,  WaveFromNum_Y+8*16, Type_I, 5, WaveForm.Data[2],  ASCII1608, BLUE,   BLACK);
+  Windows_PutNum(WaveFromNum_X+8,  WaveFromNum_Y+8*21, Type_I, 5, WaveForm.Data[3],  ASCII1608, YELLOW, BLACK);
+  Windows_PutNum(WaveFromNum_X+12, WaveFromNum_Y+8*29, Type_D, 5, WaveForm.Scale[0], ASCII1608, WHITE,  BLACK);
 
   WaveFormPrint(&WaveForm);
 }
@@ -552,12 +559,12 @@ static void MenuTest_KeyBoard( void )
   if(KEY_RL == KEY_ON)  LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*2, (u8*)"KEY_RL", ASCII1608, GREEN, BLACK);
   else                  LCD_PutStr(Axis_KEY_X+8*24, Axis_KEY_Y+16*2, (u8*)"KEY_RL", ASCII1608, WHITE, BLACK);
 
-  LCD_PutNum(Axis_KEY_X+8*38, Axis_KEY_Y+16*0, Type_D, 5, JS_LX, WHITE, BLACK);
-  LCD_PutNum(Axis_KEY_X+8*38, Axis_KEY_Y+16*1, Type_D, 5, JS_LY, WHITE, BLACK);
-  LCD_PutNum(Axis_KEY_X+8*38, Axis_KEY_Y+16*2, Type_D, 5, JS_LZ, WHITE, BLACK);
-  LCD_PutNum(Axis_KEY_X+8*50, Axis_KEY_Y+16*0, Type_D, 5, JS_RX, WHITE, BLACK);
-  LCD_PutNum(Axis_KEY_X+8*50, Axis_KEY_Y+16*1, Type_D, 5, JS_RY, WHITE, BLACK);
-  LCD_PutNum(Axis_KEY_X+8*50, Axis_KEY_Y+16*2, Type_D, 5, JS_RZ, WHITE, BLACK);
+  LCD_PutNum(Axis_KEY_X+8*38, Axis_KEY_Y+16*0, Type_D, 5, JS_LX, ASCII1608, WHITE, BLACK);
+  LCD_PutNum(Axis_KEY_X+8*38, Axis_KEY_Y+16*1, Type_D, 5, JS_LY, ASCII1608, WHITE, BLACK);
+  LCD_PutNum(Axis_KEY_X+8*38, Axis_KEY_Y+16*2, Type_D, 5, JS_LZ, ASCII1608, WHITE, BLACK);
+  LCD_PutNum(Axis_KEY_X+8*50, Axis_KEY_Y+16*0, Type_D, 5, JS_RX, ASCII1608, WHITE, BLACK);
+  LCD_PutNum(Axis_KEY_X+8*50, Axis_KEY_Y+16*1, Type_D, 5, JS_RY, ASCII1608, WHITE, BLACK);
+  LCD_PutNum(Axis_KEY_X+8*50, Axis_KEY_Y+16*2, Type_D, 5, JS_RZ, ASCII1608, WHITE, BLACK);
 
   MoveCirL(Axis_CIR_X+(JS_LX*0.0244140625f-50),       (Axis_CIR_Y-100)+(50-JS_LY*0.0244140625f), 25, GREEN, BLACK);
   MoveCirR((Axis_CIR_X+240)+(JS_RX*0.0244140625f-50), (Axis_CIR_Y-100)+(50-JS_RY*0.0244140625f), 25, GREEN, BLACK);
@@ -691,9 +698,9 @@ static void Windows_PutStr( u16 CoordiX, u16 CoordiY, u8 *ChWord, u8 FontStyle, 
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-static void Windows_PutNum( u16 CoordiX, u16 CoordiY, u8 Type, u8 Length, u32 NumData, u16 FontColor, u16 BackColor )
+static void Windows_PutNum( u16 CoordiX, u16 CoordiY, u8 Type, u8 Length, u32 NumData, u8 FontStyle, u16 FontColor, u16 BackColor )
 {
-  LCD_PutNum(Window_PosX+CoordiX, Window_PosY+CoordiY, Type, Length, NumData, FontColor, BackColor);
+  LCD_PutNum(Window_PosX+CoordiX, Window_PosY+CoordiY, Type, Length, NumData, FontStyle, FontColor, BackColor);
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/

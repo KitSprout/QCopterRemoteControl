@@ -2,7 +2,7 @@
 ========
 * Author  : [Hom](https://github.com/Hom19910422)
 * Version : v1.1
-* Update  : 2014/01/04
+* Update  : 2014/01/05
 
 Description
 ========
@@ -59,6 +59,7 @@ View
 
 Config
 ========
+<img src="https://lh3.googleusercontent.com/-iZeoe4lx8wU/Usl9gZgsuZI/AAAAAAAAGKA/TYhudVKkLHo/s800/RC_CONF.png" height="350" width="800" />
 <img src="https://lh5.googleusercontent.com/-vNn1p6Z6Y7s/UrczaR9EPkI/AAAAAAAAF9M/80ux41UU7Ac/s1600/QCopterRC_Config_PIN.png" width="800" />
 <img src="https://lh4.googleusercontent.com/-dkd0YtkochY/UrczaIU0xXI/AAAAAAAAF9E/m6ET7IX6QPM/s1600/QCopterRC_Config_AF.png"  width="800" />
 <img src="https://lh6.googleusercontent.com/-8CqkUnWzeiY/UrczaFQCg1I/AAAAAAAAF9A/zu0XXFit_L0/s1600/QCopterRC_Config_DMA.png" width="800" />

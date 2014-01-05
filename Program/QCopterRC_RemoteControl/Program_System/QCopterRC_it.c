@@ -2,6 +2,7 @@
 /*=====================================================================================================*/
 #include "stm32f4_system.h"
 #include "stm32f4_sdio.h"
+#include "QCopterRC.h"
 #include "QCopterRC_board.h"
 #include "QCopterRC_transport.h"
 #include "module_nrf24l01.h"
@@ -30,8 +31,10 @@ void SysTick_Handler( void )
 void EXTI9_5_IRQHandler( void )
 {
   if(EXTI_GetITStatus(EXTI_Line7) != RESET) {
-    nRF_Recv_IRQ();
-    Transport_Recv(RxBuf);
+    if(FSM_State != FSM_TX) {
+      nRF_Recv_IRQ();
+      Transport_Recv(RxBuf);
+    }
     EXTI_ClearITPendingBit(EXTI_Line7);
   }
 }

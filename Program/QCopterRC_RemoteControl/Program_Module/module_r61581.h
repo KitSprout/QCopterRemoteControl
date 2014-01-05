@@ -56,6 +56,13 @@
 #define LBBLUE      ((u16)0X2B12) /* 淺棕藍色 */
 /*=====================================================================================================*/
 /*=====================================================================================================*/
+typedef struct {
+  u8  Style;
+  u16 FColor;
+  u16 BColor;
+} FONT_ST;
+/*=====================================================================================================*/
+/*=====================================================================================================*/
 void R61581_Config( void );
 void R61581_BLigConfig( void );
 void R61581_Init( void );
@@ -76,8 +83,8 @@ void LCD_DrawPicture( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, uc8 *Pic 
 void LCD_PutChar1206( u16 CoordiX, u16 CoordiY, u8* ChWord, u16 FontColor, u16 BackColor );
 void LCD_PutChar1608( u16 CoordiX, u16 CoordiY, u8* ChWord, u16 FontColor, u16 BackColor );
 void LCD_PutChar1608_( u16 CoordiX, u16 CoordiY, u8* ChWord, u16 FontColor, u16 BackColor );
-void LCD_PutStr( u16 CoordiX, u16 CoordiY, u8 *ChWord, u8 FontStyle, u16 FontColor, u16 BackColor );
-void LCD_PutNum( u16 CoordiX, u16 CoordiY, u8 Type, u8 Length, u32 NumData, u16 FontColor, u16 BackColor );
+void LCD_PutStr( u16 CoordiX, u16 CoordiY, u8 *ChWord, u8 FontSyle, u16 FontColor, u16 BackColor );
+void LCD_PutNum( u16 CoordiX, u16 CoordiY, u8 Type, u8 Length, u32 NumData, u8 FontStyle, u16 FontColor, u16 BackColor );
 
 void LCD_TestColoBar( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height );
 /*=====================================================================================================*/
