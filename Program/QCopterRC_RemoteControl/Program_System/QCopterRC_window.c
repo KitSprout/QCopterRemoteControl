@@ -601,6 +601,8 @@ static void MenuTest_TransInfo( void )
 static void MenuTest_AHRS( void )
 {
   u8 i = 0;
+  VECTOR_ST VecterScal = {1.0f, 1.0f, 1.0f};
+  VECTOR_ST VecterMove = {0, 0, 0};
 
   static VECTOR_ST Vecter[8] = {
           {-Sp3D_R, -Sp3D_R, -Sp3D_R},
@@ -618,8 +620,28 @@ static void MenuTest_AHRS( void )
   Rotate_AngE.Pitch = (JS_RY>>6)-32;
   Rotate_AngE.Roll  = (JS_RX>>6)-32;
   Rotate_AngE.Yaw   = (JS_RZ>>6)-32;
+  if(KEY_LR == KEY_ON) {
+    VecterScal.X = 1.01f - (JS_LZ/204800.0f);
+    VecterScal.Y = 1.01f - (JS_LZ/204800.0f);
+    VecterScal.Z = 1.01f - (JS_LZ/204800.0f);
+  }
+  else {
+    VecterScal.X = 1.0f;
+    VecterScal.Y = 1.0f;
+    VecterScal.Z = 1.0f;
+  }
+  if(KEY_RR == KEY_ON) {
+    VecterMove.X = (JS_LX>>8)-8;
+    VecterMove.Y = (JS_LY>>8)-8;
+  }
+  else {
+    VecterMove.X = 0;
+    VecterMove.Y = 0;
+    VecterMove.Z = 0;
+  }
 
-  Window_DrawRectangleFill(115, 25, 245, 245, BLACK);
+  Window_Clear(BLACK);
+//  Window_DrawRectangleFill(91, 0, Window_H, Window_H, BLACK);
 //  LCD_DrawLine(Sp3D_X+Vecter[0].X, Sp3D_Y+Vecter[0].Y, Sp3D_X+Vecter[1].X, Sp3D_Y+Vecter[1].Y, BLACK);
 //  LCD_DrawLine(Sp3D_X+Vecter[0].X, Sp3D_Y+Vecter[0].Y, Sp3D_X+Vecter[2].X, Sp3D_Y+Vecter[2].Y, BLACK);
 //  LCD_DrawLine(Sp3D_X+Vecter[0].X, Sp3D_Y+Vecter[0].Y, Sp3D_X+Vecter[3].X, Sp3D_Y+Vecter[3].Y, BLACK);
@@ -633,8 +655,11 @@ static void MenuTest_AHRS( void )
 //  LCD_DrawLine(Sp3D_X+Vecter[3].X, Sp3D_Y+Vecter[3].Y, Sp3D_X+Vecter[5].X, Sp3D_Y+Vecter[5].Y, BLACK);
 //  LCD_DrawLine(Sp3D_X+Vecter[3].X, Sp3D_Y+Vecter[3].Y, Sp3D_X+Vecter[4].X, Sp3D_Y+Vecter[4].Y, BLACK);
 
-  for(i=0; i<8; i++)
+  for(i=0; i<8; i++) {
     Engine3D_RotateByDCM(&(Vecter[i]), &Rotate_AngE);
+    Engine3D_Scaling(&Vecter[i], &VecterScal);
+    Engine3D_Move(&Vecter[i], &VecterMove);
+  }
 
   LCD_DrawLine(Sp3D_X+Vecter[0].X, Sp3D_Y+Vecter[0].Y, Sp3D_X+Vecter[1].X, Sp3D_Y+Vecter[1].Y, WHITE);
   LCD_DrawLine(Sp3D_X+Vecter[0].X, Sp3D_Y+Vecter[0].Y, Sp3D_X+Vecter[2].X, Sp3D_Y+Vecter[2].Y, WHITE);
@@ -651,6 +676,8 @@ static void MenuTest_AHRS( void )
 
   Delay_1ms(25);
 }
+/*=====================================================================================================*/
+/*=====================================================================================================*/
 static void MenuTest_Color_Init( void )
 {
 

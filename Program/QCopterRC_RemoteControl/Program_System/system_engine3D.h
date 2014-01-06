@@ -19,6 +19,8 @@ typedef struct {
 //void Engine3D_RotateZ( s16 Angle, s16 *Coordinate );
 
 void Engine3D_RotateByDCM( VECTOR_ST *Vect, EulerAngle *pAngE );
+void Engine3D_Scaling( VECTOR_ST *Vect, VECTOR_ST *VectScal );
+void Engine3D_Move( VECTOR_ST *Vect, VECTOR_ST *VectMove );
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 #endif	 
