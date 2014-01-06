@@ -73,6 +73,7 @@ void LCD_SetWindow( u16 StartX, u16 StartY, u16 EndX, u16 EndY );
 void LCD_SetBackLight( u16 BackLight );
 
 void LCD_DrawPixel( u16 CoordiX, u16 CoordiY, u16 Color );
+void LCD_DrawLine( u16 StartX, u16 StartY, u16 EndX, u16 EndY, u32 Color );
 void LCD_DrawLineX( u16 CoordiX, u16 CoordiY, u16 Length, u16 Color );
 void LCD_DrawLineY( u16 CoordiX, u16 CoordiY, u16 Length, u16 Color );
 void LCD_DrawRectangle( u16 CoordiX, u16 CoordiY, u16 Width, u16 Height, u16 Color );

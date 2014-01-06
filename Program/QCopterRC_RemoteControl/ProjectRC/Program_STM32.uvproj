@@ -481,6 +481,21 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>ArnMath</GroupName>
+          <Files>
+            <File>
+              <FileName>arm_sin_f32.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\CMSIS\FastMathFunctions\arm_sin_f32.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_cos_f32.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\CMSIS\FastMathFunctions\arm_cos_f32.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Driver</GroupName>
           <Files>
             <File>
@@ -554,14 +569,19 @@
               <FilePath>..\Program_System\QCopterRC_transport.c</FilePath>
             </File>
             <File>
-              <FileName>QCopterRC_windows.c</FileName>
+              <FileName>QCopterRC_window.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Program_System\QCopterRC_windows.c</FilePath>
+              <FilePath>..\Program_System\QCopterRC_window.c</FilePath>
             </File>
             <File>
               <FileName>system_waveForm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Program_System\system_waveForm.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_engine3D.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Program_System\system_engine3D.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -597,6 +617,11 @@
               <FileName>algorithm_bitmap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Program_Algorithm\algorithm_bitmap.c</FilePath>
+            </File>
+            <File>
+              <FileName>algorithm_quaternion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Program_Algorithm\algorithm_quaternion.c</FilePath>
             </File>
           </Files>
         </Group>

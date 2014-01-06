@@ -3,6 +3,7 @@
 #include "stm32f4_system.h"
 #include "module_r61581.h"
 #include "module_fontlib.h"
+#include "algorithm_mathUnit.h"
 #include "algorithm_string.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
@@ -439,6 +440,89 @@ void LCD_DrawPixel( u16 CoordiX, u16 CoordiY, u16 Color )
 {
   LCD_SetCursor(CoordiX, CoordiY);
   LCD_WriteColor(Color);
+}
+/*=====================================================================================================*/
+/*=====================================================================================================*
+**函數 : LCD_DrawLine
+**功能 : Draw Line
+**輸入 : StartX, StartY, EndX, EndY, Color
+**輸出 : None
+**使用 : LCD_DrawLine(StartX, StartY, EndX, EndY, Color)
+**=====================================================================================================*/
+/*=====================================================================================================*/
+void LCD_DrawLine( u16 StartX, u16 StartY, u16 EndX, u16 EndY, u32 Color )
+{
+	u16 i;
+	s16 DeltaX, DeltaY;
+	double Slope;
+
+	DeltaX = EndX - StartX;
+	DeltaY = EndY - StartY;
+
+	// 計算 Slope
+	if(DeltaX == 0)
+		Slope = 0;
+	else
+		Slope = (double)DeltaY/(double)DeltaX;
+
+	DeltaX = fabs(DeltaX);
+	DeltaY = fabs(DeltaY);
+
+	// 畫線
+	if(EndX<StartX) {
+		if(Slope<0) {
+			if(DeltaX>DeltaY) {
+				for(i=0; i<=DeltaX; i++)
+					LCD_DrawPixel(EndX+i, EndY+(s16)(((double)i*Slope)-0.5), Color);
+			}
+			else {
+				for(i=0; i<=DeltaY; i++)
+					LCD_DrawPixel(EndX-(s16)(((double)i/Slope)-0.5), EndY-i, Color);
+			}
+		}
+		else {
+			if(DeltaX>DeltaY) {
+				for(i=0; i<=DeltaX; i++)
+					LCD_DrawPixel(EndX+i, EndY+(s16)(((double)i*Slope)+0.5), Color);
+			}
+			else {
+				for(i=0; i<=DeltaY; i++)
+					LCD_DrawPixel(EndX+(s16)(((double)i/Slope)+0.5), EndY+i, Color);
+			}
+		}
+	}
+	else if(EndX==StartX) {
+		if(EndY>StartY) {
+			for(i=0; i<=DeltaY; i++)
+				LCD_DrawPixel(StartX, StartY+i, Color);
+		}
+		else {
+			for(i=0; i<=DeltaY; i++)
+				LCD_DrawPixel(EndX, EndY+i, Color);
+		}
+	}
+	else {
+		if(Slope<0) {
+			if(DeltaX>DeltaY) {
+				for(i=0; i<=DeltaX; i++)
+					LCD_DrawPixel(StartX+i, StartY+(s16)(((double)i*Slope)-0.5), Color);
+			}
+			else {
+				for(i=0; i<=DeltaY; i++)
+					LCD_DrawPixel(StartX-(s16)(((double)i/Slope)-0.5), StartY-i, Color);
+			}
+		}
+		else {
+			if(DeltaX>DeltaY) {
+				for(i=0; i<=DeltaX; i++)
+					LCD_DrawPixel(StartX+i, StartY+(s16)(((double)i*Slope)+0.5), Color);
+			}
+			else {
+				for(i=0; i<=DeltaY; i++)
+					LCD_DrawPixel(StartX+(s16)(((double)i/Slope)+0.5), StartY+i, Color);
+			}
+		}
+	}
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*

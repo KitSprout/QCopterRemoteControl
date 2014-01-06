@@ -6,7 +6,7 @@
 #include "QCopterRC.h"
 #include "QCopterRC_board.h"
 #include "QCopterRC_transport.h"
-#include "QCopterRC_windows.h"
+#include "QCopterRC_window.h"
 #include "module_rs232.h"
 #include "module_nrf24l01.h"
 #include "module_r61581.h"
@@ -67,13 +67,13 @@ void System_Init( void )
 //  LCD_PutStr(Axis_X+8*12, Axis_Y+16*6, (u8*)" ", ASCII1608, WHITE, BLACK);
 //  LCD_PutStr(Axis_X,      Axis_Y+16*7, (u8*)"-----------------------", ASCII1608, WHITE, BLACK);
 
-  UserInterface_MoveSel(WINDOWS_CTRL);
+  UserInterface_MoveSel(WINDOW_CTRL);
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 int main( void )
 {
-  static WINDOWS_MENU WindowsMeun_Sel = WINDOWS_CTRL;
+  static WINDOW_MENU WindowsMeun_Sel = WINDOW_CTRL;
 
   /* QCopterRC Init */
   System_Init();
@@ -121,15 +121,15 @@ int main( void )
         #define DeBounce 120
         if(KEY_PR == KEY_ON) {
           WindowsMeun_Sel++;
-          if(WindowsMeun_Sel == WINDOWS_OUT_R)
-            WindowsMeun_Sel = (WINDOWS_MENU)(WINDOWS_OUT_L+1);
+          if(WindowsMeun_Sel == WINDOW_OUT_R)
+            WindowsMeun_Sel = (WINDOW_MENU)(WINDOW_OUT_L+1);
           UserInterface_MoveSel(WindowsMeun_Sel);
           Delay_1ms(DeBounce);
         }
         if(KEY_PL == KEY_ON) {
           WindowsMeun_Sel--;
-          if(WindowsMeun_Sel == WINDOWS_OUT_L)
-            WindowsMeun_Sel = (WINDOWS_MENU)(WINDOWS_OUT_R-1);
+          if(WindowsMeun_Sel == WINDOW_OUT_L)
+            WindowsMeun_Sel = (WINDOW_MENU)(WINDOW_OUT_R-1);
           UserInterface_MoveSel(WindowsMeun_Sel);
           Delay_1ms(DeBounce);
         }
