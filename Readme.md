@@ -2,7 +2,7 @@
 ========
 * Author  : [Hom](https://github.com/Hom19910422)
 * Version : v1.1
-* Update  : 2014/01/07
+* Update  : 2014/01/08
 
 Description
 ========
@@ -21,6 +21,13 @@ Hardware
 * 設計軟體 [Altium Designer 13](http://www.altium.com/en/products/altium-designer) ( [PcbLib](https://github.com/CYACAcademic/AltiumDesigner_PcbLibrary) use AD PcbLib v0.2 )
 
 *** 目前 W5500 尚未完成測試 ...
+
+QCopterRC v2.0 預計修改 ( 尚未決定改版時間 )：  
+>1. 微控制器改為 LQFP144 的 STM32F42xZ 或 STM32F43xZ，增加運算速度及功能。  
+>2. 加入 [SDRAM](http://www.issi.com/WW/pdf/42-45S16400J.pdf)，透過 FMC 操作，增加靈活與擴充性。  
+>3. 改成使用 4 吋 800*480 螢幕，增加解析度及畫質。  
+>4. 由於改成 4 吋螢幕，所以會修改整體位置，並增減部分輸入裝置功能或數量，像是按鍵數等。  
+>5. 考慮將乙太網路功能直接透過 STM32 本身硬體實現。  
 
 <img src="https://lh3.googleusercontent.com/-r6Nh2HrxldA/UrWXRap8O-I/AAAAAAAAFwo/pbTsi6B34RU/s800/QCopterRC_System.png" width="800" />
 
