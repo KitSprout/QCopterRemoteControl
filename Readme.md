@@ -2,7 +2,7 @@
 ========
 * Author  : [Hom](https://github.com/Hom19910422)
 * Version : v1.1
-* Update  : 2014/01/08
+* Update  : 2014/01/09
 
 Description
 ========
@@ -51,6 +51,7 @@ Example
 * [QCopterRC LED](https://github.com/Hom19910422/QCopterRemoteControl/tree/master/Program/TEST_QCopterRC_LED)
 * QCopterRC NRF
 * [QCopterRC SDIO](https://github.com/Hom19910422/QCopterRemoteControl/tree/master/Program/TEST_QCopterRC_SDIO) ( Use [Fatfs](http://elm-chan.org/fsw/ff/00index_e.html) 0.10 )
+* QCopterRC IMU ( 尚未實際燒錄測試 )
 * QCopterRC UART
 
 View
