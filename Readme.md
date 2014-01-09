@@ -18,7 +18,7 @@ Hardware
 * 乙太網路 : [W5500](http://www.wiznet.co.kr/Sub_Modules/en/product/Product_Detail.asp?cate1=&cate2=&cate3=&pid=1193)，使用 SPI 操作
 * 外接介面 : 1*SPI ( FFC16 ) 、1*USB ( Micro ) 、1*UART、1*I2C/CAN
 * PCB 尺寸 : 155 * 60mm
-* 設計軟體 [Altium Designer 13](http://www.altium.com/en/products/altium-designer) ( [PcbLib](https://github.com/CYACAcademic/AltiumDesigner_PcbLibrary) use AD PcbLib v0.2 )
+* 設計軟體 [Altium Designer 13](http://www.altium.com/en/products/altium-designer) ( PcbLib use AD [PcbLib v0.2](https://github.com/OpenPCB/AltiumDesigner_PcbLibrary) )
 
 *** 目前 W5500 尚未完成測試 ...
 
