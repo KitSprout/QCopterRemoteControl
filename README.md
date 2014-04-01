@@ -2,7 +2,7 @@
 ========
 * Author　: [Hom](https://github.com/Hom-Wang)
 * Version : v1.1
-* Update　: 2014/03/18
+* Update　: 2014/04/02
 
 Description
 ========

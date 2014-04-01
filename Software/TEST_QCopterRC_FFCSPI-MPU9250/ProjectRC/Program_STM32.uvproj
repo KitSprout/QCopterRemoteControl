@@ -45,7 +45,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Obj\</OutputDirectory>
-          <OutputName>STM32F407GET</OutputName>
+          <OutputName>STM32F407VGT</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -479,6 +479,16 @@
               <FileType>1</FileType>
               <FilePath>..\Program\experiment_stm32f4.c</FilePath>
             </File>
+            <File>
+              <FileName>QCopterRC_board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Program\QCopterRC_board.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_waveForm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Program\system_waveForm.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -490,9 +500,9 @@
               <FilePath>..\Program\module_r61581.c</FilePath>
             </File>
             <File>
-              <FileName>module_mpu6500.c</FileName>
+              <FileName>module_mpu9250.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Program\module_mpu6500.c</FilePath>
+              <FilePath>..\Program\module_mpu9250.c</FilePath>
             </File>
           </Files>
         </Group>

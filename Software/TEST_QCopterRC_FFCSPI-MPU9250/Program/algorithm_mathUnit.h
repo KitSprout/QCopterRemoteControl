@@ -1,22 +1,19 @@
-/* #include "module_mpu6500.h" */
+/* #include "algorithm_mathUnit.h" */
 
-#ifndef __MODULE_MPU6500_H
-#define __MODULE_MPU6500_H
+#ifndef ____ALGORITHM_MATHUNIt_H
+#define ____ALGORITHM_MATHUNIt_H
 
+#include "arm_math.h"
 #include "stm32f4xx.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-#define IMU_SPI   SPI1  // IMU 使用 SPI1
-
-#define MPU6500_WHO_AM_I    ((u8)0xF5)
+#define invSqrtf( iSq ) (1.0f/sqrtf((float)iSq))
+#define squa( Sq )      (((float)Sq)*((float)Sq))
+#define toRad( Math_D )	((float)(Math_D)*0.0174532925f)
+#define toDeg( Math_R )	((float)(Math_R)*57.2957795f)
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-void MPU6500_Config( void );
-void MPU6500_Init( void );
 
-static u8 MPU6500_ReadReg( u8 ReadAddr );
-
-u8 MPU6500_ReadID( void );
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 #endif
