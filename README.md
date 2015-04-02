@@ -2,7 +2,7 @@
 ========
 * Author  : [Hom](https://github.com/Hom-Wang)
 * Version : v1.1
-* Update  : 2014/10/01
+* Update  : 2015/04/03
 
 Description
 ========
@@ -32,11 +32,11 @@ Hardware
 *** 目前 W5500 尚未完成測試 ...
 
 QCopterRC v2.0 預計修改 ( 尚未決定改版時間 )：  
->1. 微控制器改為 LQFP144 的 STM32F42xZ 或 STM32F43xZ，增加運算速度及功能。  
->2. 加入 [SDRAM](http://www.issi.com/WW/pdf/42-45S16400J.pdf)，透過 FMC 操作，增加靈活與擴充性。  
+>1. 微控制器改為 LQFP1100 的 STM32F42xV 或 STM32F43xV，增加運算速度。  
+>2．無線傳輸部分改用 [nRF51422](https://www.nordicsemi.com/eng/Products/ANT/nRF51422) 傳輸，以相容 BLE & ANT+  
 >3. 改成使用 4 吋 800*480 螢幕，增加解析度及畫質。  
 >4. 由於改成 4 吋螢幕，所以會修改整體位置，並增減部分輸入裝置功能或數量，像是按鍵數等。  
->5. 考慮將乙太網路功能直接透過 STM32 本身硬體實現。  
+>5. 去除乙太網路功能。  
 
 <img src="https://lh3.googleusercontent.com/-r6Nh2HrxldA/UrWXRap8O-I/AAAAAAAAFwo/pbTsi6B34RU/s800/QCopterRC_System.png" width="800" />
 
