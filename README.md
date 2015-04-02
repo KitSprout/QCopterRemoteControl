@@ -32,9 +32,9 @@ Hardware
 *** 目前 W5500 尚未完成測試 ...
 
 QCopterRC v2.0 預計修改 ( 尚未決定改版時間 )：  
->1. 微控制器改為 LQFP1100 的 STM32F42xV 或 STM32F43xV，增加運算速度。  
->2．無線傳輸部分改用 [nRF51422](https://www.nordicsemi.com/eng/Products/ANT/nRF51422) 傳輸，以相容 BLE & ANT+  
->3. 改成使用 4 吋 800*480 螢幕，增加解析度及畫質。  
+>1. 微控制器改為 LQFP100 的 STM32F42xV 或 STM32F43xV，增加運算速度。  
+>2. 無線傳輸部分改用 [nRF51422](https://www.nordicsemi.com/eng/Products/ANT/nRF51422) 傳輸，以相容 BLE & ANT+。  
+>3. 改成使用 [TFT_4.0-inch](https://github.com/KitSprout/TFT_4.0-inch) 800*480 螢幕，增加解析度及畫質。  
 >4. 由於改成 4 吋螢幕，所以會修改整體位置，並增減部分輸入裝置功能或數量，像是按鍵數等。  
 >5. 去除乙太網路功能。  
 
