@@ -32,16 +32,18 @@
 //static uint8_t NRF_SPI_TX_BUFFER[NRF24_MAX_TXBUF] = {0};
 //static uint8_t NRF_SPI_RX_BUFFER[NRF24_MAX_RXBUF] = {0};
 
+static __IO NRF_OPMODE_TypeDef opmode = NRF_OPMODE_POWER_DOWN;
+
 static uint8_t NRF_TX_BUFFER[NRF_TX_MAX_PL] = {0};
 static uint8_t NRF_RX_BUFFER[NRF_RX_MAX_PL] = {0};
 
 NRF_DataTypeDef nrf = {
-  .txFlag    = NRF_STA_FINISHED,
-  .rxFlag    = NRF_STA_FINISHED,
+  .txFlag    = NRF_STA_NULL,
+  .rxFlag    = NRF_STA_NULL,
   .txLens    = 0,
   .rxLens    = 0,
-  .txTimeout = HAL_MAX_DELAY,
-  .rxTimeout = HAL_MAX_DELAY,
+  .txTimeout = 1000,
+  .rxTimeout = 1000,
   .txBuff    = NRF_TX_BUFFER,
   .rxBuff    = NRF_RX_BUFFER,
   .irqStatus = DISABLE,
@@ -146,7 +148,7 @@ void NRF24_Config( void )
   GPIO_InitStruct.Pin  = NRF24_IRQ_PIN;
   HAL_GPIO_Init(NRF24_IRQ_GPIO_PORT, &GPIO_InitStruct);
 
-  NRF24_CE_H();
+  NRF24_CE_L();
   NRF24_CSN_H();  /* LOW ENABLE */
 
   /* SPI Init ****************************************************************/
@@ -183,7 +185,7 @@ int8_t NRF24_Init( NRF_ConfigTypeDef *NRFx )
     return ERROR;
   }
 
-  NRF24_CE_H();
+  NRF24_CE_L();
   NRF24_ClearIRQFlag(NRF_STA_RX_DR | NRF_STA_TX_DS | NRF_STA_MAX_RT);
 
   if (NRFx->NRF_DynamicPayload == ENABLE) {
@@ -204,6 +206,8 @@ int8_t NRF24_Init( NRF_ConfigTypeDef *NRFx )
   NRF24_SetDataRate(NRFx->NRF_DataRate);
   NRF24_SetTxAddress(NRFx->TxAddr);
   NRF24_SetRxAddress(NRF_RXP0, NRFx->RxP0Addr);
+
+  opmode = NRF_OPMODE_STANDBY;
 
   return SUCCESS;
 }
@@ -328,6 +332,33 @@ uint8_t NRF24_ReceivedPowerDetector( void )
 }
 
 /**
+  * @brief  NRF24_OperationMode
+  */
+void NRF24_OperationMode( NRF_OPMODE_TypeDef mode )
+{
+  NRF24_CE_L();
+  switch (mode) {
+    case NRF_OPMODE_POWER_DOWN:
+      NRF24_WriteReg(NRF24L01_CONFIG, 0x0A & ~0x02);
+      break;
+    case NRF_OPMODE_STANDBY:
+      break;
+    case NRF_OPMODE_RX:
+      NRF24_SetMode(NRF_Mode_RX);
+      NRF24_WriteCommand(CMD_FLUSH_RX);
+      NRF24_CE_H();
+//      delay_us(150);
+      break;
+    case NRF_OPMODE_TX:
+      NRF24_SetMode(NRF_Mode_TX);
+      NRF24_CE_H();
+//      delay_us(150);
+      break;
+  }
+  opmode = mode;
+}
+
+/**
   * @brief  NRF24_TxPacket
   */
 uint8_t NRF24_TxPacket( uint8_t *txBuff, uint8_t lens, uint32_t timeout )
@@ -335,29 +366,48 @@ uint8_t NRF24_TxPacket( uint8_t *txBuff, uint8_t lens, uint32_t timeout )
   uint8_t status;
   uint32_t tickStart = 0;
 
-  NRF24_WriteCommand(CMD_FLUSH_TX);
-
-  NRF24_CE_L();
-  NRF24_WriteRegs(CMD_W_TX_PLOAD, txBuff, lens);
-  NRF24_CE_H();
+  switch (opmode) {
+    case NRF_OPMODE_POWER_DOWN:
+      return NRF_STA_ERROR;
+    case NRF_OPMODE_RX:
+      NRF24_WriteCommand(CMD_FLUSH_RX);
+    case NRF_OPMODE_STANDBY:
+      NRF24_CE_L();
+      NRF24_WriteRegs(CMD_W_TX_PLOAD, txBuff, lens);
+      NRF24_SetMode(NRF_Mode_TX);
+      NRF24_CE_H();
+      delay_us(150);
+      opmode = NRF_OPMODE_TX;
+      break;
+    case NRF_OPMODE_TX:
+      NRF24_WriteRegs(CMD_W_TX_PLOAD, txBuff, lens);
+      break;
+  }
 
   tickStart = HAL_GetTick();
 	while (NRF24_IRQ_Read()) {
     if ((HAL_GetTick() - tickStart) > timeout) {
+      NRF24_WriteCommand(CMD_FLUSH_TX);
+      NRF24_CE_L();
+      opmode = NRF_OPMODE_STANDBY;
       return NRF_STA_TIMUOUT;
     }
 	}
 
 	status = NRF24_ReadReg(NRF24L01_STATUS);
-	NRF24_WriteReg(NRF24L01_STATUS, status);
+  NRF24_WriteReg(NRF24L01_STATUS, status);
 
 	if (status & NRF_STA_MAX_RT) {
-    NRF24_WriteReg(CMD_FLUSH_TX, 0xFF);
+    NRF24_WriteCommand(CMD_FLUSH_TX);
     return NRF_STA_MAX_RT; 
 	}
 	else if (status & NRF_STA_TX_DS) {
 		return NRF_STA_TX_DS;
 	}
+
+  NRF24_WriteCommand(CMD_FLUSH_TX);
+  NRF24_CE_L();
+  opmode = NRF_OPMODE_STANDBY;
 
 	return NRF_STA_ERROR;
 }
@@ -370,26 +420,42 @@ uint8_t NRF24_TxPacketDef( void )
   uint8_t status;
   uint32_t tickStart = 0;
 
-  NRF24_WriteCommand(CMD_FLUSH_TX);
-
-  NRF24_CE_L();
-  NRF24_WriteRegs(CMD_W_TX_PLOAD, nrf.txBuff, nrf.txLens);
-  NRF24_CE_H();
+  switch (opmode) {
+    case NRF_OPMODE_POWER_DOWN:
+      nrf.txFlag = NRF_STA_ERROR;
+      return NRF_STA_ERROR;
+    case NRF_OPMODE_RX:
+      NRF24_WriteCommand(CMD_FLUSH_RX);
+    case NRF_OPMODE_STANDBY:
+      NRF24_CE_L();
+      NRF24_WriteRegs(CMD_W_TX_PLOAD, nrf.txBuff, nrf.txLens);
+      NRF24_SetMode(NRF_Mode_TX);
+      NRF24_CE_H();
+      delay_us(150);
+      opmode = NRF_OPMODE_TX;
+      break;
+    case NRF_OPMODE_TX:
+      NRF24_WriteRegs(CMD_W_TX_PLOAD, nrf.txBuff, nrf.txLens);
+      break;
+  }
 
   tickStart = HAL_GetTick();
 	while (NRF24_IRQ_Read()) {
     if ((HAL_GetTick() - tickStart) > nrf.txTimeout) {
       nrf.txFlag = NRF_STA_TIMUOUT;
+      NRF24_WriteCommand(CMD_FLUSH_TX);
+      NRF24_CE_L();
+      opmode = NRF_OPMODE_STANDBY;
       return NRF_STA_TIMUOUT;
     }
 	}
 
 	status = NRF24_ReadReg(NRF24L01_STATUS);
-	NRF24_WriteReg(NRF24L01_STATUS, status);
+  NRF24_WriteReg(NRF24L01_STATUS, status);
 
 	if (status & NRF_STA_MAX_RT) {
-    NRF24_WriteReg(CMD_FLUSH_TX, 0xFF);
     nrf.txFlag = NRF_STA_MAX_RT;
+    NRF24_WriteCommand(CMD_FLUSH_TX);
     return NRF_STA_MAX_RT; 
 	}
 	else if (status & NRF_STA_TX_DS) {
@@ -398,35 +464,41 @@ uint8_t NRF24_TxPacketDef( void )
 	}
 
   nrf.txFlag = NRF_STA_ERROR;
+  NRF24_WriteCommand(CMD_FLUSH_TX);
+  NRF24_CE_L();
+  opmode = NRF_OPMODE_STANDBY;
+
 	return NRF_STA_ERROR;
 }
 
 /**
   * @brief  NRF24_TxPacketIRQ
   */
-uint8_t NRF24_TxPacketIRQ( void )
+void NRF24_TxPacketIRQ( void )
 {
-  uint8_t status;
-
-  status = NRF24_ReadReg(NRF24L01_STATUS);
-  if (status & NRF_STA_TX_FULL) {
-    NRF24_WriteCommand(CMD_FLUSH_TX);
-    nrf.txFlag = NRF_STA_TX_FULL;
-    return NRF_STA_TX_FULL;
+  if (nrf.txLens != 0) {
+    nrf.irqStatus = DISABLE;
+    switch (opmode) {
+      case NRF_OPMODE_POWER_DOWN:
+        nrf.txFlag = NRF_STA_ERROR;
+        return;
+      case NRF_OPMODE_RX:
+        NRF24_WriteCommand(CMD_FLUSH_RX);
+      case NRF_OPMODE_STANDBY:
+        NRF24_CE_L();
+        NRF24_WriteRegs(CMD_W_TX_PLOAD, nrf.txBuff, nrf.txLens);
+        NRF24_SetMode(NRF_Mode_TX);
+        NRF24_CE_H();
+        delay_us(150);
+        opmode = NRF_OPMODE_TX;
+        break;
+      case NRF_OPMODE_TX:
+        NRF24_WriteRegs(CMD_W_TX_PLOAD, nrf.txBuff, nrf.txLens);
+        break;
+    }
+    nrf.txLens = 0;
+    nrf.irqStatus = ENABLE;
   }
-  else if (status & NRF_STA_RX_DR) {
-    nrf.txFlag = NRF_STA_BUSY;
-    return NRF_STA_BUSY;
-  }
-
-  NRF24_CE_L();
-  NRF24_WriteRegs(CMD_W_TX_PLOAD, nrf.txBuff, nrf.txLens);
-  NRF24_SetMode(NRF_Mode_TX);
-  NRF24_CE_H();
-
-  nrf.txLens = 0;
-
-  return NRF_STA_OK;
 }
 
 /**
@@ -437,14 +509,30 @@ uint8_t NRF24_RxPacket( uint8_t *rxBuff, uint8_t *lens, uint32_t timeout )
   uint8_t status;
   uint32_t tickStart = 0;
 
-  nrf.rxLens = 0;
-  NRF24_WriteCommand(CMD_FLUSH_RX);
+  *lens = 0;
 
-  NRF24_CE_H();
+  switch (opmode) {
+    case NRF_OPMODE_POWER_DOWN:
+      return NRF_STA_ERROR;
+    case NRF_OPMODE_TX:
+      NRF24_WriteCommand(CMD_FLUSH_TX);
+    case NRF_OPMODE_STANDBY:
+      NRF24_CE_L();
+      NRF24_SetMode(NRF_Mode_RX);
+      NRF24_CE_H();
+      delay_us(150);
+      opmode = NRF_OPMODE_RX;
+      break;
+    case NRF_OPMODE_RX:
+      break;
+  }
+
   tickStart = HAL_GetTick();
   while (NRF24_IRQ_Read()) {
     if ((HAL_GetTick() - tickStart) > timeout) {
-      nrf.rxFlag = NRF_STA_TIMUOUT;
+      NRF24_WriteCommand(CMD_FLUSH_RX);
+      NRF24_CE_L();
+      opmode = NRF_OPMODE_STANDBY;
       return NRF_STA_TIMUOUT;
     }
   }
@@ -454,15 +542,17 @@ uint8_t NRF24_RxPacket( uint8_t *rxBuff, uint8_t *lens, uint32_t timeout )
 
   if (status & NRF_STA_RX_DR) {
     *lens = NRF24_ReadReg(CMD_RX_PL_WID);
-    if (*lens > 32)
+    if (*lens > 32) {
       *lens = 32;
+    }
     NRF24_ReadRegs(CMD_R_RX_PLOAD, rxBuff, *lens);
-    NRF24_WriteReg(CMD_FLUSH_RX, 0xFF);
-    nrf.rxFlag = NRF_STA_RX_DR;
     return NRF_STA_RX_DR;
   }
 
-  nrf.rxFlag = NRF_STA_ERROR;
+  NRF24_WriteCommand(CMD_FLUSH_RX);
+  NRF24_CE_L();
+  opmode = NRF_OPMODE_STANDBY;
+
   return NRF_STA_ERROR;
 }
 
@@ -475,13 +565,30 @@ uint8_t NRF24_RxPacketDef( void )
   uint32_t tickStart = 0;
 
   nrf.rxLens = 0;
-  NRF24_WriteCommand(CMD_FLUSH_RX);
 
-  NRF24_CE_H();
+  switch (opmode) {
+    case NRF_OPMODE_POWER_DOWN:
+      return NRF_STA_ERROR;
+    case NRF_OPMODE_TX:
+      NRF24_WriteCommand(CMD_FLUSH_TX);
+    case NRF_OPMODE_STANDBY:
+      NRF24_CE_L();
+      NRF24_SetMode(NRF_Mode_RX);
+      NRF24_CE_H();
+      delay_us(150);
+      opmode = NRF_OPMODE_RX;
+      break;
+    case NRF_OPMODE_RX:
+      break;
+  }
+
   tickStart = HAL_GetTick();
   while (NRF24_IRQ_Read()) {
     if ((HAL_GetTick() - tickStart) > nrf.rxTimeout) {
       nrf.rxFlag = NRF_STA_TIMUOUT;
+      NRF24_WriteCommand(CMD_FLUSH_RX);
+      NRF24_CE_L();
+      opmode = NRF_OPMODE_STANDBY;
       return NRF_STA_TIMUOUT;
     }
   }
@@ -490,16 +597,20 @@ uint8_t NRF24_RxPacketDef( void )
   NRF24_WriteReg(NRF24L01_STATUS, status);
 
   if (status & NRF_STA_RX_DR) {
+    nrf.rxFlag = NRF_STA_RX_DR;
     nrf.rxLens = NRF24_ReadReg(CMD_RX_PL_WID);
     if (nrf.rxLens > 32)
       nrf.rxLens = 32;
     NRF24_ReadRegs(CMD_R_RX_PLOAD, nrf.rxBuff, nrf.rxLens);
-    NRF24_WriteReg(CMD_FLUSH_RX, 0xFF);
-    nrf.rxFlag = NRF_STA_RX_DR;
+    NRF24_WriteCommand(CMD_FLUSH_RX);
     return NRF_STA_RX_DR;
   }
 
   nrf.rxFlag = NRF_STA_ERROR;
+  NRF24_WriteCommand(CMD_FLUSH_RX);
+  NRF24_CE_L();
+  opmode = NRF_OPMODE_STANDBY;
+
   return NRF_STA_ERROR;
 }
 
@@ -512,32 +623,52 @@ void NRF24_IrqEvent( void )
 
   if (nrf.irqStatus == ENABLE) {
     status = NRF24_ReadReg(NRF24L01_STATUS);
-    if (status & NRF_STA_RX_DR) {
-      nrf.rxFlag = NRF_STA_RX_DR;
-      nrf.rxLens = NRF24_ReadReg(CMD_RX_PL_WID);
-      if (nrf.rxLens > 32)
-        nrf.rxLens = 32;
-      NRF24_ReadRegs(CMD_R_RX_PLOAD, nrf.rxBuff, nrf.rxLens);
-      if (nrf.rxEventCallback != NULL) {
-        nrf.rxEventCallback();
-      }
-      NRF24_WriteReg(CMD_FLUSH_RX, 0xFF);
-      NRF24_WriteReg(NRF24L01_STATUS, status);
-    }
-    else if (status & NRF_STA_TX_DS) {
-      nrf.txFlag = NRF_STA_TX_DS;
-      if (nrf.txEventCallback != NULL) {
-        nrf.txEventCallback();
-      }
-      NRF24_WriteReg(NRF24L01_STATUS, status);
-    }
-    else if (status & NRF_STA_MAX_RT) {
-      nrf.txFlag = NRF_STA_MAX_RT;
-      if (nrf.txEventCallback != NULL) {
-        nrf.txEventCallback();
-      }
-      NRF24_WriteReg(CMD_FLUSH_TX, 0xFF);
-      NRF24_WriteReg(NRF24L01_STATUS, status);
+    NRF24_WriteReg(NRF24L01_STATUS, status);
+    switch (opmode) {
+      case NRF_OPMODE_POWER_DOWN:
+      case NRF_OPMODE_STANDBY:
+        NRF24_CE_L();
+        break;
+
+      case NRF_OPMODE_RX:
+        if (status & NRF_STA_RX_DR) {
+          nrf.rxFlag = NRF_STA_RX_DR;
+          nrf.rxLens = NRF24_ReadReg(CMD_RX_PL_WID);
+          if (nrf.rxLens > 32)
+            nrf.rxLens = 32;
+          NRF24_ReadRegs(CMD_R_RX_PLOAD, nrf.rxBuff, nrf.rxLens);
+          if (nrf.rxEventCallback != NULL) {
+            nrf.rxEventCallback();
+          }
+        }
+        else {
+          nrf.rxFlag = NRF_STA_ERROR;
+          NRF24_WriteCommand(CMD_FLUSH_RX);
+          NRF24_CE_L();
+          NRF24_SetMode(NRF_Mode_RX);
+          NRF24_CE_H();
+        }
+        break;
+
+      case NRF_OPMODE_TX:
+        if (status & NRF_STA_MAX_RT) {
+          nrf.txFlag = NRF_STA_MAX_RT;
+          NRF24_WriteCommand(CMD_FLUSH_TX);
+        }
+        else if (status & NRF_STA_TX_DS) {
+          nrf.txFlag = NRF_STA_TX_DS;
+          if (nrf.txEventCallback != NULL) {
+            nrf.txEventCallback();
+          }
+        }
+        else {
+          nrf.txFlag = NRF_STA_ERROR;
+          NRF24_WriteCommand(CMD_FLUSH_TX);
+//          NRF24_CE_L();
+//          NRF24_SetMode(NRF_Mode_TX);
+//          NRF24_CE_H();
+        }
+        break;
     }
   }
 }

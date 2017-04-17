@@ -91,6 +91,13 @@ typedef enum {
   NRF_Mode_RX = 0x01,
 } NRF_Mode_TypeDef;
 
+typedef enum {
+  NRF_OPMODE_POWER_DOWN = 0x00,
+  NRF_OPMODE_STANDBY    = 0x01,
+  NRF_OPMODE_RX         = 0x02,
+  NRF_OPMODE_TX         = 0x03
+} NRF_OPMODE_TypeDef;
+
 typedef struct {
   uint8_t *TxAddr;
   uint8_t *RxP0Addr;
@@ -149,9 +156,9 @@ typedef struct {
 #define NRF_STA_TX_DS           ((uint8_t)0x20)
 #define NRF_STA_RX_DR           ((uint8_t)0x40)
 
-#define NRF_STA_FINISHED        ((uint8_t)0x00)
+#define NRF_STA_NULL            ((uint8_t)0x00)
+#define NRF_STA_BUSY            ((uint8_t)0x08)
 #define NRF_STA_TIMUOUT         ((uint8_t)0x80)
-#define NRF_STA_BUSY            ((uint8_t)0xD0)
 #define NRF_STA_OK              ((uint8_t)0x0D)
 #define NRF_STA_ERROR           ((uint8_t)0xFF)
 
@@ -183,7 +190,10 @@ typedef struct {
 #define NRF24L01_DYNPD          ((uint8_t)0x1C)
 #define NRF24L01_FEATURE        ((uint8_t)0x1D)
 
-/* Exported functions ----------------------------------------------------------------------*/  
+/* Exported functions ----------------------------------------------------------------------*/
+
+uint8_t NRF24_WriteCommand( uint8_t writeCommand );
+
 void    NRF24_Config( void );
 int8_t  NRF24_Init( NRF_ConfigTypeDef *NRFx );
 int8_t  NRF24_DeviceCheck( void );
@@ -197,13 +207,12 @@ void    NRF24_SetDataRate( NRF_DataRate_TypeDef dataRate );
 void    NRF24_SetTxPower( NRF_TxPower_TypeDef txPower );
 void    NRF24_SetMode( NRF_Mode_TypeDef mode );
 uint8_t NRF24_ReceivedPowerDetector( void );
+void    NRF24_OperationMode( NRF_OPMODE_TypeDef mode );
 uint8_t NRF24_TxPacket( uint8_t *txBuff, uint8_t lens, uint32_t timeout );
 uint8_t NRF24_TxPacketDef( void );
-uint8_t NRF24_TxPacketIRQ( void );
+void    NRF24_TxPacketIRQ( void );
 uint8_t NRF24_RxPacket( uint8_t *rxBuff, uint8_t *lens, uint32_t timeout );
 uint8_t NRF24_RxPacketDef( void );
-uint8_t NRF24_GetTxFlag( void );
-uint8_t NRF24_GetRxFlag( void );
 void    NRF24_IrqEvent( void );
 
 void    NRF24_TxCallback( void );

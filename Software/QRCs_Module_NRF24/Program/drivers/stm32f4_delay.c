@@ -44,7 +44,7 @@ void delay_us( __IO uint32_t __us )
     __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();
     __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();
     __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();
-    __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();  __nop();
+    __nop();  __nop();
   }
 }
 
